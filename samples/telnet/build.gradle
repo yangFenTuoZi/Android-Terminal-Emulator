@@ -1,8 +1,10 @@
-apply plugin: 'com.android.application'
+plugins {
+    id 'com.android.application'
+}
 
 android {
     namespace "jackpal.androidterm.sample.telnet"
-    compileSdkVersion 36
+    compileSdk 36
 
     defaultConfig {
         applicationId "jackpal.androidterm.sample.telnet"

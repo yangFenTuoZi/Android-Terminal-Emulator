@@ -70,7 +70,6 @@ import jackpal.androidterm.emulatorview.EmulatorView;
 import jackpal.androidterm.emulatorview.TermSession;
 import jackpal.androidterm.emulatorview.UpdateCallback;
 import jackpal.androidterm.emulatorview.compat.ClipboardManagerCompat;
-import jackpal.androidterm.emulatorview.compat.ClipboardManagerCompatFactory;
 import jackpal.androidterm.emulatorview.compat.KeycodeConstants;
 import jackpal.androidterm.util.SessionList;
 import jackpal.androidterm.util.TermSettings;
@@ -899,12 +898,8 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
     }
 
     private boolean canPaste() {
-        ClipboardManagerCompat clip = ClipboardManagerCompatFactory
-                .getManager(getApplicationContext());
-        if (clip.hasText()) {
-            return true;
-        }
-        return false;
+        ClipboardManagerCompat clip = new ClipboardManagerCompat(getApplicationContext());
+        return clip.hasText();
     }
 
     private void doPreferences() {
@@ -949,8 +944,7 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
     }
 
     private void doCopyAll() {
-        ClipboardManagerCompat clip = ClipboardManagerCompatFactory
-                .getManager(getApplicationContext());
+        ClipboardManagerCompat clip = new ClipboardManagerCompat(getApplicationContext());
         clip.setText(getCurrentTermSession().getTranscriptText().trim());
     }
 
@@ -958,8 +952,7 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
         if (!canPaste()) {
             return;
         }
-        ClipboardManagerCompat clip = ClipboardManagerCompatFactory
-                .getManager(getApplicationContext());
+        ClipboardManagerCompat clip = new ClipboardManagerCompat(getApplicationContext());
         CharSequence paste = clip.getText();
         getCurrentTermSession().write(paste.toString());
     }

@@ -1,8 +1,10 @@
-apply plugin: 'com.android.library'
+plugins {
+    id 'com.android.library'
+}
 
 android {
     namespace "jackpal.androidterm.emulatorview"
-    compileSdkVersion 36
+    compileSdk 36
 
     defaultConfig {
         minSdk 26
