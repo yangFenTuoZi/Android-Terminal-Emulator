@@ -32,7 +32,6 @@ import android.widget.ListView;
 
 import jackpal.androidterm.compat.ActionBarCompat;
 import jackpal.androidterm.compat.ActivityCompat;
-import jackpal.androidterm.compat.AndroidCompat;
 import jackpal.androidterm.util.SessionList;
 
 public class WindowList extends ListActivity {

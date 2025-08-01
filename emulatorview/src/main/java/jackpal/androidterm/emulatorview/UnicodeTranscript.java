@@ -19,7 +19,6 @@ package jackpal.androidterm.emulatorview;
 import android.util.Log;
 
 import jackpal.androidterm.emulatorview.compat.AndroidCharacterCompat;
-import jackpal.androidterm.emulatorview.compat.AndroidCompat;
 
 /**
  * A backing store for a TranscriptScreen.
