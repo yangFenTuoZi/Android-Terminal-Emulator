@@ -64,13 +64,10 @@ import java.util.List;
 import java.util.Locale;
 
 import jackpal.androidterm.compat.ActionBarCompat;
-import jackpal.androidterm.compat.ActivityCompat;
-import jackpal.androidterm.compat.MenuItemCompat;
 import jackpal.androidterm.emulatorview.EmulatorView;
 import jackpal.androidterm.emulatorview.TermSession;
 import jackpal.androidterm.emulatorview.UpdateCallback;
 import jackpal.androidterm.emulatorview.compat.ClipboardManagerCompat;
-import jackpal.androidterm.emulatorview.compat.KeycodeConstants;
 import jackpal.androidterm.util.SessionList;
 import jackpal.androidterm.util.TermSettings;
 
@@ -263,24 +260,24 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
      * Intercepts keys before the view/terminal gets it.
      */
     private View.OnKeyListener mKeyListener = new View.OnKeyListener() {
-        public boolean onKey(View v, int keyCode, KeyEvent event) {
+        public boolean onKey(View v, int keyCode, android.view.KeyEvent event) {
             return backkeyInterceptor(keyCode, event) || keyboardShortcuts(keyCode, event);
         }
 
         /**
          * Keyboard shortcuts (tab management, paste)
          */
-        private boolean keyboardShortcuts(int keyCode, KeyEvent event) {
-            if (event.getAction() != KeyEvent.ACTION_DOWN) {
+        private boolean keyboardShortcuts(int keyCode, android.view.KeyEvent event) {
+            if (event.getAction() != android.view.KeyEvent.ACTION_DOWN) {
                 return false;
             }
             if (!mUseKeyboardShortcuts) {
                 return false;
             }
-            boolean isCtrlPressed = (event.getMetaState() & KeycodeConstants.META_CTRL_ON) != 0;
-            boolean isShiftPressed = (event.getMetaState() & KeycodeConstants.META_SHIFT_ON) != 0;
+            boolean isCtrlPressed = (event.getMetaState() & KeyEvent.META_CTRL_ON) != 0;
+            boolean isShiftPressed = (event.getMetaState() & KeyEvent.META_SHIFT_ON) != 0;
 
-            if (keyCode == KeycodeConstants.KEYCODE_TAB && isCtrlPressed) {
+            if (keyCode == KeyEvent.KEYCODE_TAB && isCtrlPressed) {
                 if (isShiftPressed) {
                     mViewFlipper.showPrevious();
                 } else {
@@ -288,11 +285,11 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
                 }
 
                 return true;
-            } else if (keyCode == KeycodeConstants.KEYCODE_N && isCtrlPressed && isShiftPressed) {
+            } else if (keyCode == KeyEvent.KEYCODE_N && isCtrlPressed && isShiftPressed) {
                 doCreateNewWindow();
 
                 return true;
-            } else if (keyCode == KeycodeConstants.KEYCODE_V && isCtrlPressed && isShiftPressed) {
+            } else if (keyCode == KeyEvent.KEYCODE_V && isCtrlPressed && isShiftPressed) {
                 doPaste();
 
                 return true;
@@ -304,8 +301,8 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
         /**
          * Make sure the back button always leaves the application.
          */
-        private boolean backkeyInterceptor(int keyCode, KeyEvent event) {
-            if (keyCode == KeyEvent.KEYCODE_BACK && mActionBarMode == TermSettings.ACTION_BAR_MODE_HIDES && mActionBar != null && mActionBar.isShowing()) {
+        private boolean backkeyInterceptor(int keyCode, android.view.KeyEvent event) {
+            if (keyCode == android.view.KeyEvent.KEYCODE_BACK && mActionBarMode == TermSettings.ACTION_BAR_MODE_HIDES && mActionBar != null && mActionBar.isShowing()) {
                 /* We need to intercept the key event before the view sees it,
                    otherwise the view will handle it before we get it */
                 onKeyUp(keyCode, event);
@@ -356,14 +353,12 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
         WifiManager wm = (WifiManager)getSystemService(Context.WIFI_SERVICE);
         mWifiLock = wm.createWifiLock(WIFI_MODE_FULL_HIGH_PERF, TermDebug.LOG_TAG);
 
-        ActionBarCompat actionBar = ActivityCompat.getActionBar(this);
-        if (actionBar != null) {
-            mActionBar = actionBar;
-            actionBar.setNavigationMode(ActionBarCompat.NAVIGATION_MODE_LIST);
-            actionBar.setDisplayOptions(0, ActionBarCompat.DISPLAY_SHOW_TITLE);
-            if (mActionBarMode == TermSettings.ACTION_BAR_MODE_HIDES) {
-                actionBar.hide();
-            }
+        ActionBarCompat actionBar = new ActionBarCompat(getActionBar());
+        mActionBar = actionBar;
+        actionBar.setNavigationMode(ActionBarCompat.NAVIGATION_MODE_LIST);
+        actionBar.setDisplayOptions(0, ActionBarCompat.DISPLAY_SHOW_TITLE);
+        if (mActionBarMode == TermSettings.ACTION_BAR_MODE_HIDES) {
+            actionBar.hide();
         }
 
         mHaveFullHwKeyboard = checkHaveFullHwKeyboard(getResources().getConfiguration());
@@ -635,8 +630,8 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-        MenuItemCompat.setShowAsAction(menu.findItem(R.id.menu_new_window), MenuItemCompat.SHOW_AS_ACTION_ALWAYS);
-        MenuItemCompat.setShowAsAction(menu.findItem(R.id.menu_close_window), MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
+        menu.findItem(R.id.menu_new_window).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.findItem(R.id.menu_close_window).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         return true;
     }
 
@@ -844,9 +839,9 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
         }
 
     @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
+    public boolean onKeyUp(int keyCode, android.view.KeyEvent event) {
         switch (keyCode) {
-        case KeyEvent.KEYCODE_BACK:
+        case android.view.KeyEvent.KEYCODE_BACK:
             if (mActionBarMode == TermSettings.ACTION_BAR_MODE_HIDES && mActionBar != null && mActionBar.isShowing()) {
                 mActionBar.hide();
                 return true;
@@ -863,7 +858,7 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
             default:
                 return false;
             }
-        case KeyEvent.KEYCODE_MENU:
+        case android.view.KeyEvent.KEYCODE_MENU:
             if (mActionBar != null && !mActionBar.isShowing()) {
                 mActionBar.show();
                 return true;
@@ -1009,7 +1004,7 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
         } else {
             mWakeLock.acquire();
         }
-        ActivityCompat.invalidateOptionsMenu(this);
+        invalidateOptionsMenu();
     }
 
     private void doToggleWifiLock() {
@@ -1018,7 +1013,7 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
         } else {
             mWifiLock.acquire();
         }
-        ActivityCompat.invalidateOptionsMenu(this);
+        invalidateOptionsMenu();
     }
 
     private void doToggleActionBar() {

@@ -22,7 +22,7 @@ import android.widget.SpinnerAdapter;
 /**
  * Provides ActionBar APIs.
  */
-public abstract class ActionBarCompat {
+public class ActionBarCompat {
     public static final int NAVIGATION_MODE_STANDARD = 0;
     public static final int NAVIGATION_MODE_LIST = 1;
     public static final int NAVIGATION_MODE_TABS = 2;
@@ -36,48 +36,17 @@ public abstract class ActionBarCompat {
     public static final int ID_HOME = 0x0102002c;
 
     public interface OnNavigationListener {
-        public abstract boolean onNavigationItemSelected(int position, long id);
+        boolean onNavigationItemSelected(int position, long id);
     }
 
-    public static ActionBarCompat wrap(Object actionBar) {
-        if (actionBar != null) {
-            return new ActionBarApi11OrLater(actionBar);
-        }
-        return null;
-    }
+    private final ActionBar bar;
 
-    public abstract int getDisplayOptions();
-    public abstract int getHeight();
-    public abstract int getNavigationItemCount();
-    public abstract int getNavigationMode();
-    public abstract int getSelectedNavigationIndex();
-    public abstract CharSequence getTitle();
-    public abstract void hide();
-    public abstract boolean isShowing();
-    public abstract void setDisplayOptions(int options);
-    public abstract void setDisplayOptions(int options, int mask);
-    public abstract void setListNavigationCallbacks(SpinnerAdapter adapter, OnNavigationListener callback);
-    public abstract void setNavigationMode(int mode);
-    public abstract void setSelectedNavigationItem(int position);
-    public abstract void setTitle(int resId);
-    public abstract void setTitle(CharSequence title);
-    public abstract void show();
-}
-
-class ActionBarApi11OrLater extends ActionBarCompat {
-    private ActionBar bar;
-
-    ActionBarApi11OrLater(Object bar) {
+    public ActionBarCompat(Object bar) {
         this.bar = (ActionBar) bar;
     }
 
     private ActionBar.OnNavigationListener wrapOnNavigationCallback(OnNavigationListener callback) {
-        final OnNavigationListener cb = callback;
-        return new ActionBar.OnNavigationListener() {
-            public boolean onNavigationItemSelected(int position, long id) {
-                return cb.onNavigationItemSelected(position, id);
-            }
-        };
+        return callback::onNavigationItemSelected;
     }
 
     public int getDisplayOptions() {

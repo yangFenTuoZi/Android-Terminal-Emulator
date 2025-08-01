@@ -48,7 +48,6 @@ import java.util.Arrays;
 import java.util.Hashtable;
 
 import jackpal.androidterm.emulatorview.compat.ClipboardManagerCompat;
-import jackpal.androidterm.emulatorview.compat.KeycodeConstants;
 import jackpal.androidterm.emulatorview.compat.Patterns;
 
 /**
@@ -824,12 +823,12 @@ public class EmulatorView extends View implements GestureDetector.OnGestureListe
                 if (leftLength > 0) {
                     for (int i = 0; i < leftLength; i++) {
                         sendKeyEvent(
-                            new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL));
+                            new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN, android.view.KeyEvent.KEYCODE_DEL));
                     }
                 } else if ((leftLength == 0) && (rightLength == 0)) {
                     // Delete key held down / repeating
                     sendKeyEvent(
-                        new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL));
+                        new android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN, android.view.KeyEvent.KEYCODE_DEL));
                 }
                 // TODO: handle forward deletes.
                 return true;
@@ -846,7 +845,7 @@ public class EmulatorView extends View implements GestureDetector.OnGestureListe
                 return true;
             }
 
-            public boolean sendKeyEvent(KeyEvent event) {
+            public boolean sendKeyEvent(android.view.KeyEvent event) {
                 if (LOG_IME) {
                     Log.w(TAG, "sendKeyEvent(" + event + ")");
                 }
@@ -1270,11 +1269,11 @@ public class EmulatorView extends View implements GestureDetector.OnGestureListe
      * Called when a key is pressed in the view.
      *
      * @param keyCode The keycode of the key which was pressed.
-     * @param event A {@link KeyEvent} describing the event.
+     * @param event A {@link android.view.KeyEvent} describing the event.
      * @return Whether the event was handled.
      */
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    public boolean onKeyDown(int keyCode, android.view.KeyEvent event) {
         if (LOG_KEY_EVENTS) {
             Log.w(TAG, "onKeyDown " + keyCode);
         }
@@ -1308,18 +1307,18 @@ public class EmulatorView extends View implements GestureDetector.OnGestureListe
 
     /** Do we want to intercept this system key? */
     private boolean isInterceptedSystemKey(int keyCode) {
-        return keyCode == KeyEvent.KEYCODE_BACK && mBackKeySendsCharacter;
+        return keyCode == android.view.KeyEvent.KEYCODE_BACK && mBackKeySendsCharacter;
     }
 
     /**
      * Called when a key is released in the view.
      *
      * @param keyCode The keycode of the key which was released.
-     * @param event A {@link KeyEvent} describing the event.
+     * @param event A {@link android.view.KeyEvent} describing the event.
      * @return Whether the event was handled.
      */
     @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
+    public boolean onKeyUp(int keyCode, android.view.KeyEvent event) {
         if (LOG_KEY_EVENTS) {
             Log.w(TAG, "onKeyUp " + keyCode);
         }
@@ -1340,16 +1339,16 @@ public class EmulatorView extends View implements GestureDetector.OnGestureListe
     }
 
     @Override
-    public boolean onKeyPreIme(int keyCode, KeyEvent event) {
+    public boolean onKeyPreIme(int keyCode, android.view.KeyEvent event) {
         if (sTrapAltAndMeta) {
             boolean altEsc = mKeyListener.getAltSendsEsc();
-            boolean altOn = (event.getMetaState() & KeyEvent.META_ALT_ON) != 0;
-            boolean metaOn = (event.getMetaState() & KeyEvent.META_META_ON) != 0;
-            boolean altPressed = (keyCode == KeyEvent.KEYCODE_ALT_LEFT)
-                    || (keyCode == KeyEvent.KEYCODE_ALT_RIGHT);
+            boolean altOn = (event.getMetaState() & android.view.KeyEvent.META_ALT_ON) != 0;
+            boolean metaOn = (event.getMetaState() & android.view.KeyEvent.META_META_ON) != 0;
+            boolean altPressed = (keyCode == android.view.KeyEvent.KEYCODE_ALT_LEFT)
+                    || (keyCode == android.view.KeyEvent.KEYCODE_ALT_RIGHT);
             boolean altActive = mKeyListener.isAltActive();
             if (altEsc && (altOn || altPressed || altActive || metaOn)) {
-                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                if (event.getAction() == android.view.KeyEvent.ACTION_DOWN) {
                     return onKeyDown(keyCode, event);
                 } else {
                     return onKeyUp(keyCode, event);
@@ -1362,7 +1361,7 @@ public class EmulatorView extends View implements GestureDetector.OnGestureListe
         }
 
         if (mKeyListener.isCtrlActive()) {
-            if (event.getAction() == KeyEvent.ACTION_DOWN) {
+            if (event.getAction() == android.view.KeyEvent.ACTION_DOWN) {
                 return onKeyDown(keyCode, event);
             } else {
                 return onKeyUp(keyCode, event);
@@ -1384,13 +1383,13 @@ public class EmulatorView extends View implements GestureDetector.OnGestureListe
         return false;
     }
 
-    private boolean handleHardwareControlKey(int keyCode, KeyEvent event) {
-        if (keyCode == KeycodeConstants.KEYCODE_CTRL_LEFT ||
-            keyCode == KeycodeConstants.KEYCODE_CTRL_RIGHT) {
+    private boolean handleHardwareControlKey(int keyCode, android.view.KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_CTRL_LEFT ||
+            keyCode == KeyEvent.KEYCODE_CTRL_RIGHT) {
             if (LOG_KEY_EVENTS) {
                 Log.w(TAG, "handleHardwareControlKey " + keyCode);
             }
-            boolean down = event.getAction() == KeyEvent.ACTION_DOWN;
+            boolean down = event.getAction() == android.view.KeyEvent.ACTION_DOWN;
             mKeyListener.handleHardwareControlKey(down);
             invalidate();
             return true;
@@ -1410,7 +1409,7 @@ public class EmulatorView extends View implements GestureDetector.OnGestureListe
         return false;
     }
 
-    private boolean isSystemKey(int keyCode, KeyEvent event) {
+    private boolean isSystemKey(int keyCode, android.view.KeyEvent event) {
         return event.isSystem();
     }
 

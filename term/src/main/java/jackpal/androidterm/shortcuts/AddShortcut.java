@@ -1,34 +1,35 @@
 //From the desk of Frank P. Westlake; public domain.
 package jackpal.androidterm.shortcuts;
 
-import android.content.    Context;
-import android.content.    DialogInterface;
-import android.content.    Intent;
-import android.content.    SharedPreferences;
-import android.graphics.   Typeface;
-import android.net.        Uri;
-import android.os.         Bundle;
-import android.os.         Environment;
-import android.preference. PreferenceManager;
-import android.util.       Log;
-import android.view.       Gravity;
-import android.view.       View;
-import android.view.       View.OnFocusChangeListener;
-import android.widget.     Button;
-import android.widget.     ImageView;
-import android.widget.     LinearLayout;
-import android.widget.     ScrollView;
-import android.widget.     TextView;
-import android.widget.     EditText;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Typeface;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.preference.PreferenceManager;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
+import android.view.View.OnFocusChangeListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
+
+import java.io.File;
+import java.security.GeneralSecurityException;
+
 import jackpal.androidterm.R;
 import jackpal.androidterm.RemoteInterface;
 import jackpal.androidterm.RunShortcut;
 import jackpal.androidterm.TermDebug;
-import jackpal.androidterm.compat.AlertDialogCompat;
 import jackpal.androidterm.util.ShortcutEncryption;
-
-import java.io.            File;
-import java.security.      GeneralSecurityException;
 
 public class      AddShortcut
        extends    android.app.Activity
@@ -58,8 +59,8 @@ public class      AddShortcut
   void makeShortcut()
   {
     if(path==null) path="";
-    final AlertDialogCompat.Builder alert =
-        AlertDialogCompat.newInstanceBuilder(context, AlertDialogCompat.THEME_HOLO_DARK);
+    final AlertDialog.Builder alert =
+        new AlertDialog.Builder(context);
     LinearLayout   lv=new LinearLayout(context);
                    lv.setOrientation(LinearLayout.VERTICAL);
     for(int i=0, n=et.length; i<n; i++) {et[i]=new EditText(context); et[i].setSingleLine(true);}
