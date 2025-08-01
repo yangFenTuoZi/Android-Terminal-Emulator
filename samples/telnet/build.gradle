@@ -2,12 +2,12 @@ apply plugin: 'com.android.application'
 
 android {
     namespace "jackpal.androidterm.sample.telnet"
-    compileSdk 34
+    compileSdkVersion 36
 
     defaultConfig {
         applicationId "jackpal.androidterm.sample.telnet"
         minSdk 26
-        targetSdk 34
+        targetSdk 36
     }
 
     buildTypes {

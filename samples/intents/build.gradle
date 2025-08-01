@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     namespace "jackpal.androidterm.sample.intents"
-    compileSdk 36
+    compileSdkVersion 36
 
     defaultConfig {
         applicationId "jackpal.androidterm.sample.intents"
