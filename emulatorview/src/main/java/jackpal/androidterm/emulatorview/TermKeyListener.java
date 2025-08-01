@@ -650,9 +650,6 @@ class TermKeyListener {
     }
 
     static boolean isEventFromToggleDevice(KeyEvent event) {
-        if (AndroidCompat.SDK < 11) {
-            return true;
-        }
         KeyCharacterMapCompat kcm = KeyCharacterMapCompat.wrap(
                 KeyCharacterMap.load(event.getDeviceId()));
         return kcm.getModifierBehaviour() ==

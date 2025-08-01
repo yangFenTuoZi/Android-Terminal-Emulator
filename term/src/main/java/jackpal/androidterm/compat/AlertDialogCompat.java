@@ -23,27 +23,11 @@ public class AlertDialogCompat extends AlertDialog
     super(context, cancelable, cancelListener);
   }
   ////////////////////////////////////////////////////////////
-  private static class Api11OrLater extends AlertDialog
-  {
-    public Api11OrLater(Context context, int theme)
-    {
-      super(context, theme);
-    }
-    public Api11OrLater(Context context, boolean cancelable, DialogInterface.OnCancelListener cancelListener)
-    {
-      super(context, cancelable, cancelListener);
-    }
-  }
-  ////////////////////////////////////////////////////////////
   private static class Api14OrLater extends AlertDialog
   {
     public Api14OrLater(Context context, int theme)
     {
       super(context, theme);
-    }
-    public Api14OrLater(Context context, boolean cancelable, DialogInterface.OnCancelListener cancelListener)
-    {
-      super(context, cancelable, cancelListener);
     }
   }
   ////////////////////////////////////////////////////////////
@@ -54,15 +38,7 @@ public class AlertDialogCompat extends AlertDialog
   ////////////////////////////////////////////////////////////
   public static AlertDialog newInstance(Context context, int theme)
   {
-    if(AndroidCompat.SDK >= 14)
-    {
-      return(new Api14OrLater(context, theme));
-    }
-    if(AndroidCompat.SDK >= 11)
-    {
-      return(new Api11OrLater(context, theme));
-    }
-    return(new AlertDialogCompat(context));
+    return(new Api14OrLater(context, theme));
   }
   ////////////////////////////////////////////////////////////
   public static AlertDialog newInstance(Context context, boolean cancelable, DialogInterface.OnCancelListener cancelListener)
@@ -72,18 +48,6 @@ public class AlertDialogCompat extends AlertDialog
   ////////////////////////////////////////////////////////////
 
   public static AlertDialog.Builder newInstanceBuilder(Context context, int theme) {
-    if (AndroidCompat.SDK >= 11) {
-      return new Api11OrLaterBuilder(context, theme);
-    } else {
-      return new AlertDialog.Builder(context);
-    }
-  }
-  private static class Api11OrLaterBuilder extends AlertDialog.Builder {
-    public Api11OrLaterBuilder(Context context) {
-      super(context);
-    }
-    public Api11OrLaterBuilder(Context context, int theme) {
-      super(context, theme);
-    }
+    return new AlertDialog.Builder(context);
   }
 }

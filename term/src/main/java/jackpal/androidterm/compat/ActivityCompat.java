@@ -33,15 +33,10 @@ public class ActivityCompat {
     }
 
     public static void invalidateOptionsMenu(Activity activity) {
-        if (AndroidCompat.SDK >= 11) {
-            Api11OrLater.invalidateOptionsMenu(activity);
-        }
+        Api11OrLater.invalidateOptionsMenu(activity);
     }
 
     public static ActionBarCompat getActionBar(Activity activity) {
-        if (AndroidCompat.SDK < 11) {
-            return null;
-        }
         return ActionBarCompat.wrap(Api11OrLater.getActionBar(activity));
     }
 }

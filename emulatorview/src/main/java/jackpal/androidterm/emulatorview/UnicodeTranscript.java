@@ -482,16 +482,6 @@ class UnicodeTranscript {
     }
 
     /**
-     * Minimum API version for which we're willing to let Android try
-     * rendering conjoining Hangul jamo as composed syllable blocks.
-     *
-     * This appears to work on Android 4.1.2, 4.3, and 4.4 (real devices only;
-     * the emulator's broken for some reason), but not on 4.0.4 -- hence the
-     * choice of API 16 as the minimum.
-     */
-    static final int HANGUL_CONJOINING_MIN_SDK = 16;
-
-    /**
      * Gives the display width of the code point in a monospace font.
      *
      * Nonspacing combining marks, format characters, and control characters
@@ -532,24 +522,15 @@ class UnicodeTranscript {
 
         if ((codePoint >= 0x1160 && codePoint <= 0x11FF) ||
             (codePoint >= 0xD7B0 && codePoint <= 0xD7FF)) {
-            if (AndroidCompat.SDK >= HANGUL_CONJOINING_MIN_SDK) {
-                /* Treat Hangul jamo medial vowels and final consonants as
-                 * combining characters with width 0 to make jamo composition
-                 * work correctly.
-                 *
-                 * XXX: This is wrong for medials/finals outside a Korean
-                 * syllable block, but there's no easy solution to that
-                 * problem, and we may as well at least get the common case
-                 * right. */
-                return 0;
-            } else {
-                /* Older versions of Android didn't compose Hangul jamo, but
-                 * instead rendered them as individual East Asian wide
-                 * characters (despite Unicode defining medial vowels and final
-                 * consonants as East Asian neutral/narrow).  Treat them as
-                 * width 2 characters to match the rendering. */
-                return 2;
-            }
+            /* Treat Hangul jamo medial vowels and final consonants as
+             * combining characters with width 0 to make jamo composition
+             * work correctly.
+             *
+             * XXX: This is wrong for medials/finals outside a Korean
+             * syllable block, but there's no easy solution to that
+             * problem, and we may as well at least get the common case
+             * right. */
+            return 0;
         }
         if (Character.charCount(codePoint) == 1) {
             // Android's getEastAsianWidth() only works for BMP characters

@@ -25,7 +25,6 @@ import jackpal.androidterm.RemoteInterface;
 import jackpal.androidterm.RunShortcut;
 import jackpal.androidterm.TermDebug;
 import jackpal.androidterm.compat.AlertDialogCompat;
-import jackpal.androidterm.compat.PRNGFixes;
 import jackpal.androidterm.util.ShortcutEncryption;
 
 import java.io.            File;
@@ -223,8 +222,6 @@ public class      AddShortcut
     , int    shortcutColor
     )
     {
-      // Apply workarounds for SecureRandom bugs in Android < 4.4
-      PRNGFixes.apply();
       ShortcutEncryption.Keys keys=ShortcutEncryption.getKeys(context);
       if(keys==null)
       {
