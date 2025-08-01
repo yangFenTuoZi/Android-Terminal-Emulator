@@ -94,13 +94,14 @@ public class TermService extends Service implements TermSession.FinishCallback
         mTermSessions = new SessionList();
 
         /* Put the service in the foreground. */
-        Notification notification = new Notification(R.drawable.ic_stat_service_notification_icon, getText(R.string.service_notify_text), System.currentTimeMillis());
-        notification.flags |= Notification.FLAG_ONGOING_EVENT;
-        Intent notifyIntent = new Intent(this, Term.class);
-        notifyIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notifyIntent, 0);
-        notification.setLatestEventInfo(this, getText(R.string.application_terminal), getText(R.string.service_notify_text), pendingIntent);
-        compat.startForeground(RUNNING_NOTIFICATION, notification);
+        // TODO fix this to use NotificationChannel on API Level >= 26
+//        Notification notification = new Notification(R.drawable.ic_stat_service_notification_icon, getText(R.string.service_notify_text), System.currentTimeMillis());
+//        notification.flags |= Notification.FLAG_ONGOING_EVENT;
+//        Intent notifyIntent = new Intent(this, Term.class);
+//        notifyIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notifyIntent, 0);
+//        notification.setLatestEventInfo(this, getText(R.string.application_terminal), getText(R.string.service_notify_text), pendingIntent);
+//        compat.startForeground(RUNNING_NOTIFICATION, notification);
 
         Log.d(TermDebug.LOG_TAG, "TermService started");
         return;
