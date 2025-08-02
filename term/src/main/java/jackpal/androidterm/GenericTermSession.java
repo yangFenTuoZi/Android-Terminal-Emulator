@@ -16,17 +16,16 @@
 
 package jackpal.androidterm;
 
-import java.io.*;
-import java.lang.reflect.Field;
-
-import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 
 import jackpal.androidterm.emulatorview.ColorScheme;
 import jackpal.androidterm.emulatorview.TermSession;
 import jackpal.androidterm.emulatorview.UpdateCallback;
-
 import jackpal.androidterm.util.TermSettings;
 
 /**
@@ -208,25 +207,7 @@ class GenericTermSession extends TermSession {
         return false;
     }
 
-    private static void cacheDescField() throws NoSuchFieldException {
-        if (descriptorField != null)
-            return;
-
-        descriptorField = FileDescriptor.class.getDeclaredField("descriptor");
-        descriptorField.setAccessible(true);
-    }
-
     private static int getIntFd(ParcelFileDescriptor parcelFd) throws IOException {
-        if (Build.VERSION.SDK_INT >= 12)
-            return FdHelperHoneycomb.getFd(parcelFd);
-        else {
-            try {
-                cacheDescField();
-
-                return descriptorField.getInt(parcelFd.getFileDescriptor());
-            } catch (Exception e) {
-                throw new IOException("Unable to obtain file descriptor on this OS version: " + e.getMessage());
-            }
-        }
+        return parcelFd.getFd();
     }
 }

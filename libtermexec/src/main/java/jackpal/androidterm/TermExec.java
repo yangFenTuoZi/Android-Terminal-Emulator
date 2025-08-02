@@ -1,12 +1,16 @@
 package jackpal.androidterm;
 
-import android.annotation.TargetApi;
-import android.os.*;
+import android.os.Looper;
+import android.os.ParcelFileDescriptor;
+
 import androidx.annotation.NonNull;
-import java.io.FileDescriptor;
+
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Utility methods for creating and managing a subprocess. This class differs from
@@ -23,8 +27,6 @@ public class TermExec {
     }
 
     public static final String SERVICE_ACTION_V1 = "jackpal.androidterm.action.START_TERM.v1";
-
-    private static Field descriptorField;
 
     private final List<String> command;
     private final Map<String, String> environment;
@@ -51,8 +53,8 @@ public class TermExec {
     }
 
     public @NonNull TermExec command(List<String> command) {
-        command.clear();
-        command.addAll(command);
+        this.command.clear();
+        this.command.addAll(command);
         return this;
     }
 
@@ -70,11 +72,11 @@ public class TermExec {
         if (Looper.getMainLooper() == Looper.myLooper())
             throw new IllegalStateException("This method must not be called from the main thread!");
 
-        if (command.size() == 0)
+        if (command.isEmpty())
             throw new IllegalStateException("Empty command!");
 
         final String cmd = command.remove(0);
-        final String[] cmdArray = command.toArray(new String[command.size()]);
+        final String[] cmdArray = command.toArray(new String[0]);
         final String[] envArray = new String[environment.size()];
         int i = 0;
         for (Map.Entry<String, String> entry : environment.entrySet()) {
@@ -100,33 +102,10 @@ public class TermExec {
 
     static int createSubprocess(ParcelFileDescriptor masterFd, String cmd, String[] args, String[] envVars) throws IOException
     {
-        final int integerFd;
 
-        if (Build.VERSION.SDK_INT >= 12)
-            integerFd = FdHelperHoneycomb.getFd(masterFd);
-        else {
-            try {
-                if (descriptorField == null) {
-                    descriptorField = FileDescriptor.class.getDeclaredField("descriptor");
-                    descriptorField.setAccessible(true);
-                }
-
-                integerFd = descriptorField.getInt(masterFd.getFileDescriptor());
-            } catch (Exception e) {
-                throw new IOException("Unable to obtain file descriptor on this OS version: " + e.getMessage());
-            }
-        }
-
-        return createSubprocessInternal(cmd, args, envVars, integerFd);
+        return createSubprocessInternal(cmd, args, envVars, masterFd.getFd());
     }
 
     private static native int createSubprocessInternal(String cmd, String[] args, String[] envVars, int masterFd);
 }
 
-// prevents runtime errors on old API versions with ruthless verifier
-@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
-class FdHelperHoneycomb {
-    static int getFd(ParcelFileDescriptor descriptor) {
-        return descriptor.getFd();
-    }
-}
