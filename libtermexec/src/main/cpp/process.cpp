@@ -26,8 +26,7 @@
 #include <unistd.h>
 #include <termios.h>
 #include <signal.h>
-
-typedef unsigned short char16_t;
+#include <string.h>
 
 class String8 {
 public:
@@ -41,7 +40,7 @@ public:
         }
     }
 
-    void set(const char16_t* o, size_t numChars) {
+    void set(const jchar *o, size_t numChars) {
         if (mString) {
             free(mString);
         }
@@ -179,7 +178,7 @@ static int create_subprocess(JNIEnv *env, const char *cmd, char *const argv[], c
 
 extern "C" {
 
-JNIEXPORT void JNICALL Java_jackpal_androidterm_TermExec_sendSignal(JNIEnv *env, jobject clazz,
+JNIEXPORT void JNICALL Java_jackpal_androidterm_TermExec_sendSignal(JNIEnv *env, jclass clazz,
     jint procId, jint signal)
 {
     kill(procId, signal);
