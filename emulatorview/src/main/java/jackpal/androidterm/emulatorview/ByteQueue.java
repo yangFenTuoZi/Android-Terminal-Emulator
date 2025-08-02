@@ -27,26 +27,22 @@ class ByteQueue {
     }
 
     public int getBytesAvailable() {
-        synchronized(this) {
+        synchronized (this) {
             return mStoredBytes;
         }
     }
 
-    public int read(byte[] buffer, int offset, int length)
-        throws InterruptedException {
+    public int read(byte[] buffer, int offset, int length) throws InterruptedException {
         if (length + offset > buffer.length) {
-            throw
-                new IllegalArgumentException("length + offset > buffer.length");
+            throw new IllegalArgumentException("length + offset > buffer.length");
         }
         if (length < 0) {
-            throw
-            new IllegalArgumentException("length < 0");
-
+            throw new IllegalArgumentException("length < 0");
         }
         if (length == 0) {
             return 0;
         }
-        synchronized(this) {
+        synchronized (this) {
             while (mStoredBytes == 0) {
                 wait();
             }
@@ -79,24 +75,21 @@ class ByteQueue {
      * it is the caller's responsibility to check whether all of the data
      * was written and repeat the call to write() if necessary.
      */
-    public int write(byte[] buffer, int offset, int length)
-    throws InterruptedException {
+    public int write(byte[] buffer, int offset, int length) throws InterruptedException {
         if (length + offset > buffer.length) {
-            throw
-                new IllegalArgumentException("length + offset > buffer.length");
+            throw new IllegalArgumentException("length + offset > buffer.length");
         }
         if (length < 0) {
-            throw
-            new IllegalArgumentException("length < 0");
+            throw new IllegalArgumentException("length < 0");
 
         }
         if (length == 0) {
             return 0;
         }
-        synchronized(this) {
+        synchronized (this) {
             int bufferLength = mBuffer.length;
             boolean wasEmpty = mStoredBytes == 0;
-            while(bufferLength == mStoredBytes) {
+            while (bufferLength == mStoredBytes) {
                 wait();
             }
             int tail = mHead + mStoredBytes;

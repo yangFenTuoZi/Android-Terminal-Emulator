@@ -269,7 +269,7 @@ abstract class BaseTextRenderer implements TextRenderer {
             0xffffffd7,
             0xffffffff,
 
-        // 24 grey scale ramp
+            // 24 grey scale ramp
             0xff080808,
             0xff121212,
             0xff1c1c1c,
@@ -339,11 +339,11 @@ abstract class BaseTextRenderer implements TextRenderer {
 
         mCopyRedToAlphaPaint = new Paint();
         ColorMatrix cm = new ColorMatrix();
-        cm.set(new float[] {
+        cm.set(new float[]{
                 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0,
                 0, 0, 0, 0, 0,
-                1, 0, 0, 0, 0 });
+                1, 0, 0, 0, 0});
         mCopyRedToAlphaPaint.setColorFilter(new ColorMatrixColorFilter(cm));
 
         mShiftCursor = new Path();
@@ -392,9 +392,9 @@ abstract class BaseTextRenderer implements TextRenderer {
     }
 
     protected void drawCursorImp(Canvas canvas, float x, float y, float charWidth, float charHeight,
-            int cursorMode) {
+                                 int cursorMode) {
         if (cursorMode == 0) {
-            canvas.drawRect(x,  y - charHeight, x + charWidth, y, mCursorScreenPaint);
+            canvas.drawRect(x, y - charHeight, x + charWidth, y, mCursorScreenPaint);
             return;
         }
 
@@ -436,12 +436,12 @@ abstract class BaseTextRenderer implements TextRenderer {
 
     private void drawCursorHelper(Canvas canvas, Path path, int mode, int shift) {
         switch ((mode >> shift) & MODE_MASK) {
-        case MODE_ON:
-            canvas.drawPath(path, mCursorStrokePaint);
-            break;
-        case MODE_LOCKED:
-            canvas.drawPath(path, mCursorPaint);
-            break;
+            case MODE_ON:
+                canvas.drawPath(path, mCursorStrokePaint);
+                break;
+            case MODE_LOCKED:
+                canvas.drawPath(path, mCursorPaint);
+                break;
         }
     }
 }

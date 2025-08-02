@@ -40,7 +40,7 @@ class Bitmap4x8FontRenderer extends BaseTextRenderer {
     public Bitmap4x8FontRenderer(Resources resources, ColorScheme scheme) {
         super(scheme);
         int fontResource = R.drawable.atari_small_nodpi;
-        mFont = BitmapFactory.decodeResource(resources,fontResource);
+        mFont = BitmapFactory.decodeResource(resources, fontResource);
         mPaint = new Paint();
         mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
     }
@@ -58,9 +58,9 @@ class Bitmap4x8FontRenderer extends BaseTextRenderer {
     }
 
     public void drawTextRun(Canvas canvas, float x, float y,
-            int lineOffset, int runWidth, char[] text, int index, int count,
-            boolean selectionStyle, int textStyle,
-            int cursorOffset, int cursorIndex, int cursorIncr, int cursorWidth, int cursorMode) {
+                            int lineOffset, int runWidth, char[] text, int index, int count,
+                            boolean selectionStyle, int textStyle,
+                            int cursorOffset, int cursorIndex, int cursorIncr, int cursorWidth, int cursorMode) {
         int foreColor = TextStyle.decodeForeColor(textStyle);
         int backColor = TextStyle.decodeBackColor(textStyle);
         int effect = TextStyle.decodeEffect(textStyle);
@@ -98,13 +98,13 @@ class Bitmap4x8FontRenderer extends BaseTextRenderer {
 
         // The cursor is too small to show the cursor mode.
         if (lineOffset <= cursorOffset && cursorOffset < (lineOffset + count)) {
-          drawTextRunHelper(canvas, x, y, cursorOffset, text, cursorOffset-lineOffset, 1,
-                  TextStyle.ciCursorForeground, TextStyle.ciCursorBackground);
+            drawTextRunHelper(canvas, x, y, cursorOffset, text, cursorOffset - lineOffset, 1,
+                    TextStyle.ciCursorForeground, TextStyle.ciCursorBackground);
         }
     }
 
     private void drawTextRunHelper(Canvas canvas, float x, float y, int lineOffset, char[] text,
-            int index, int count, int foreColor, int backColor) {
+                                   int index, int count, int foreColor, int backColor) {
         setColorMatrix(mPalette[foreColor], mPalette[backColor]);
         int destX = (int) x + kCharacterWidth * lineOffset;
         int destY = (int) y;

@@ -16,19 +16,19 @@
 
 package jackpal.androidterm.emulatorview;
 
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetEncoder;
-import java.nio.charset.CodingErrorAction;
-
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.CodingErrorAction;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 /**
  * A terminal session, consisting of a VT100 terminal emulator and its
@@ -108,10 +108,11 @@ public class TermSession {
          */
         void onSessionFinish(TermSession session);
     }
+
     private FinishCallback mFinishCallback;
 
     private boolean mIsRunning = false;
-    private Handler mMsgHandler = new Handler() {
+    private Handler mMsgHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             if (!mIsRunning) {
@@ -120,12 +121,7 @@ public class TermSession {
             if (msg.what == NEW_INPUT) {
                 readFromProcess();
             } else if (msg.what == EOF) {
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        onProcessExit();
-                    }
-                });
+                new Handler(Looper.getMainLooper()).post(() -> onProcessExit());
             }
         }
     };
@@ -139,7 +135,7 @@ public class TermSession {
     public TermSession(final boolean exitOnEOF) {
         mWriteCharBuffer = CharBuffer.allocate(2);
         mWriteByteBuffer = ByteBuffer.allocate(4);
-        mUTF8Encoder = Charset.forName("UTF-8").newEncoder();
+        mUTF8Encoder = StandardCharsets.UTF_8.newEncoder();
         mUTF8Encoder.onMalformedInput(CodingErrorAction.REPLACE);
         mUTF8Encoder.onUnmappableCharacter(CodingErrorAction.REPLACE);
 
@@ -151,7 +147,7 @@ public class TermSession {
             @Override
             public void run() {
                 try {
-                    while(true) {
+                    while (true) {
                         int read = mTermIn.read(mBuffer);
                         if (read == -1) {
                             // EOF -- process exited
@@ -167,8 +163,7 @@ public class TermSession {
                                     mMsgHandler.obtainMessage(NEW_INPUT));
                         }
                     }
-                } catch (IOException e) {
-                } catch (InterruptedException e) {
+                } catch (IOException | InterruptedException ignored) {
                 }
 
                 if (exitOnEOF) mMsgHandler.sendMessage(mMsgHandler.obtainMessage(EOF));
@@ -184,7 +179,9 @@ public class TermSession {
             public void run() {
                 Looper.prepare();
 
-                mWriterHandler = new Handler() {
+                mWriterHandler = new Handler(
+                        Objects.requireNonNull(Looper.myLooper(), "Writer thread must have a Looper")
+                ) {
                     @Override
                     public void handleMessage(Message msg) {
                         if (msg.what == NEW_OUTPUT) {
@@ -221,9 +218,7 @@ public class TermSession {
                     // Ignore exception
                     // We don't really care if the receiver isn't listening.
                     // We just make a best effort to answer the query.
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                } catch (InterruptedException ignored) {
                 }
             }
         };
@@ -238,7 +233,7 @@ public class TermSession {
      * Set the terminal emulator's window size and start terminal emulation.
      *
      * @param columns The number of columns in the terminal window.
-     * @param rows The number of rows in the terminal window.
+     * @param rows    The number of rows in the terminal window.
      */
     public void initializeEmulator(int columns, int rows) {
         mTranscriptScreen = new TranscriptScreen(columns, TRANSCRIPT_ROWS, rows, mColorScheme);
@@ -263,9 +258,9 @@ public class TermSession {
      * it to the stream, but implementations in derived classes should call
      * through to this method to do the actual writing.
      *
-     * @param data An array of bytes to write to the terminal.
+     * @param data   An array of bytes to write to the terminal.
      * @param offset The offset into the array at which the data starts.
-     * @param count The number of bytes to be written.
+     * @param count  The number of bytes to be written.
      */
     public void write(byte[] data, int offset, int count) {
         try {
@@ -275,7 +270,7 @@ public class TermSession {
                 count -= written;
                 notifyNewOutput();
             }
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ignored) {
         }
     }
 
@@ -291,11 +286,8 @@ public class TermSession {
      * @param data The String to write to the terminal.
      */
     public void write(String data) {
-        try {
-            byte[] bytes = data.getBytes("UTF-8");
-            write(bytes, 0, bytes.length);
-        } catch (UnsupportedEncodingException e) {
-        }
+        byte[] bytes = data.getBytes(StandardCharsets.UTF_8);
+        write(bytes, 0, bytes.length);
     }
 
     /**
@@ -329,15 +321,15 @@ public class TermSession {
         encoder.reset();
         encoder.encode(charBuf, byteBuf, true);
         encoder.flush(byteBuf);
-        write(byteBuf.array(), 0, byteBuf.position()-1);
+        write(byteBuf.array(), 0, byteBuf.position() - 1);
     }
 
     /* Notify the writer thread that there's new output waiting */
     private void notifyNewOutput() {
         Handler writerHandler = mWriterHandler;
         if (writerHandler == null) {
-           /* Writer thread isn't started -- will pick up data once it does */
-           return;
+            /* Writer thread isn't started -- will pick up data once it does */
+            return;
         }
         writerHandler.sendEmptyMessage(NEW_OUTPUT);
     }
@@ -460,7 +452,7 @@ public class TermSession {
      * implementation.</em>
      *
      * @param columns The number of columns in the terminal window.
-     * @param rows The number of rows in the terminal window.
+     * @param rows    The number of rows in the terminal window.
      */
     public void updateSize(int columns, int rows) {
         if (mEmulator == null) {
@@ -474,7 +466,7 @@ public class TermSession {
      * Retrieve the terminal's screen and scrollback buffer.
      *
      * @return A {@link String} containing the contents of the screen and
-     *         scrollback buffer.
+     * scrollback buffer.
      */
     public String getTranscriptText() {
         return mTranscriptScreen.getTranscriptText();
@@ -486,7 +478,7 @@ public class TermSession {
     private void readFromProcess() {
         int bytesAvailable = mByteQueue.getBytesAvailable();
         int bytesToRead = Math.min(bytesAvailable, mReceiveBuffer.length);
-        int bytesRead = 0;
+        int bytesRead;
         try {
             bytesRead = mByteQueue.read(mReceiveBuffer, 0, bytesToRead);
         } catch (InterruptedException e) {
@@ -507,9 +499,9 @@ public class TermSession {
      * emulator without modifying it in any way.  Subclasses can override it to
      * modify the data before giving it to the terminal.
      *
-     * @param data A byte array containing the data read.
+     * @param data   A byte array containing the data read.
      * @param offset The offset into the buffer where the read data begins.
-     * @param count The number of bytes read.
+     * @param count  The number of bytes read.
      */
     protected void processInput(byte[] data, int offset, int count) {
         mEmulator.append(data, offset, count);
@@ -520,9 +512,9 @@ public class TermSession {
      * emulation client, the session's {@link InputStream}, and any processing
      * being done by {@link #processInput processInput}.
      *
-     * @param data The data to be written to the terminal.
+     * @param data   The data to be written to the terminal.
      * @param offset The starting offset into the buffer of the data.
-     * @param count The length of the data to be written.
+     * @param count  The length of the data to be written.
      */
     protected final void appendToEmulator(byte[] data, int offset, int count) {
         mEmulator.append(data, offset, count);
@@ -628,7 +620,7 @@ public class TermSession {
             mTermOut.close();
         } catch (IOException e) {
             // We don't care if this fails
-        } catch (NullPointerException e) {
+        } catch (NullPointerException ignored) {
         }
 
         if (mFinishCallback != null) {

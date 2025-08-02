@@ -14,13 +14,22 @@ public class ClipboardManagerCompat {
     }
 
     public CharSequence getText() {
-        ClipData.Item item = clip.getPrimaryClip().getItemAt(0);
-        return item.getText();
+        ClipData clipData = clip.getPrimaryClip();
+        if (clipData == null || clipData.getItemCount() == 0) {
+            ClipData.Item item = clip.getPrimaryClip().getItemAt(0);
+            return item.getText();
+        } else {
+            return null;
+        }
     }
 
     public boolean hasText() {
-        return (clip.hasPrimaryClip() && clip.getPrimaryClipDescription()
-                .hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN));
+        ClipDescription clipDescription = clip.getPrimaryClipDescription();
+        boolean hasMimeType = false;
+        if (clipDescription != null) {
+            hasMimeType = clipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN);
+        }
+        return (clip.hasPrimaryClip() && hasMimeType);
     }
 
     public void setText(CharSequence text) {

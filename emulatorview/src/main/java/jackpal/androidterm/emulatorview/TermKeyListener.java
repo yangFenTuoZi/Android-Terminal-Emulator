@@ -66,14 +66,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import jackpal.androidterm.emulatorview.compat.KeyCharacterMapCompat;
-
 /**
  * An ASCII key listener. Supports control characters and escape. Keeps track of
  * the current state of the alt, shift, fn, and control keys.
  *
  */
-class TermKeyListener {
+public class TermKeyListener {
     private final static String TAG = "TermKeyListener";
     private static final boolean LOG_MISC = false;
     private static final boolean LOG_KEYS = false;
@@ -94,7 +92,7 @@ class TermKeyListener {
     private String[] mAppKeyCodes = new String[256];
 
     private void initKeyCodes() {
-        mKeyMap = new HashMap<Integer, String>();
+        mKeyMap = new HashMap<>();
         mKeyMap.put(KEYMOD_SHIFT | KEYCODE_DPAD_LEFT, "\033[1;2D");
         mKeyMap.put(KEYMOD_ALT | KEYCODE_DPAD_LEFT, "\033[1;3D");
         mKeyMap.put(KEYMOD_ALT | KEYMOD_SHIFT | KEYCODE_DPAD_LEFT, "\033[1;4D");
@@ -332,17 +330,11 @@ class TermKeyListener {
         }
 
         public int getUIMode() {
-            switch (mState) {
-            default:
-            case UNPRESSED:
-                return TextRenderer.MODE_OFF;
-            case PRESSED:
-            case RELEASED:
-            case USED:
-                return TextRenderer.MODE_ON;
-            case LOCKED:
-                return TextRenderer.MODE_LOCKED;
-            }
+            return switch (mState) {
+                case PRESSED, RELEASED, USED -> TextRenderer.MODE_ON;
+                case LOCKED -> TextRenderer.MODE_LOCKED;
+                default -> TextRenderer.MODE_OFF;
+            };
         }
     }
 
@@ -706,10 +698,9 @@ class TermKeyListener {
     }
 
     static boolean isEventFromToggleDevice(KeyEvent event) {
-        KeyCharacterMapCompat kcm = new KeyCharacterMapCompat(
-                KeyCharacterMap.load(event.getDeviceId()));
-        return kcm.getModifierBehaviour() ==
-                KeyCharacterMapCompat.MODIFIER_BEHAVIOR_CHORDED_OR_TOGGLED;
+        KeyCharacterMap kcm = KeyCharacterMap.load(event.getDeviceId());
+        return kcm.getModifierBehavior() ==
+                KeyCharacterMap.MODIFIER_BEHAVIOR_CHORDED_OR_TOGGLED;
     }
 
     public boolean handleKeyCode(int keyCode, KeyEvent event, boolean appMode) throws IOException {
