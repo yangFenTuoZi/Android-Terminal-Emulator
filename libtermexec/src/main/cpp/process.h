@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-#ifndef _JACKPAL_PROCESS_H
-#define _JACKPAL_PROCESS_H 1
+#ifndef JACKPAL_PROCESS_H
+#define JACKPAL_PROCESS_H 1
 
-#include <stddef.h>
+#include <cstddef>
 #include "jni.h"
 #include <android/log.h>
 
@@ -31,4 +31,4 @@ JNIEXPORT jint JNICALL Java_jackpal_androidterm_TermExec_createSubprocessInterna
       (JNIEnv *, jclass, jint);
 }
 
-#endif	/* !defined(_JACKPAL_PROCESS_H) */
+#endif	/* !defined(JACKPAL_PROCESS_H) */

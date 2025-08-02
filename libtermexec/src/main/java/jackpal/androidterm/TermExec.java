@@ -100,12 +100,10 @@ public class TermExec {
      */
     public static native void sendSignal(int processId, int signal);
 
-    static int createSubprocess(ParcelFileDescriptor masterFd, String cmd, String[] args, String[] envVars) throws IOException
-    {
-
+    static int createSubprocess(ParcelFileDescriptor masterFd, String cmd, String[] args, String[] envVars) throws IOException {
         return createSubprocessInternal(cmd, args, envVars, masterFd.getFd());
     }
 
-    private static native int createSubprocessInternal(String cmd, String[] args, String[] envVars, int masterFd);
+    private static native int createSubprocessInternal(String cmd, String[] args, String[] envVars, int masterFd) throws IOException ;
 }
 

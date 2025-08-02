@@ -38,13 +38,12 @@
 /*
  * Register several native methods for one class.
  */
-int registerNativeMethods(JNIEnv* env, const char* className,
-    JNINativeMethod* gMethods, int numMethods)
-{
+int registerNativeMethods(JNIEnv *env, const char *className,
+                          JNINativeMethod *gMethods, int numMethods) {
     jclass clazz;
 
     clazz = env->FindClass(className);
-    if (clazz == NULL) {
+    if (clazz == nullptr) {
         LOGE("Native registration unable to find class '%s'", className);
         return JNI_FALSE;
     }
@@ -63,15 +62,15 @@ int registerNativeMethods(JNIEnv* env, const char* className,
  */
 
 typedef union {
-    JNIEnv* env;
-    void* venv;
+    JNIEnv *env;
+    void *venv;
 } UnionJNIEnvToVoid;
 
-jint JNI_OnLoad(JavaVM* vm, void* reserved) {
+jint JNI_OnLoad(JavaVM *vm, void *reserved) {
     UnionJNIEnvToVoid uenv;
-    uenv.venv = NULL;
+    uenv.venv = nullptr;
     jint result = -1;
-    JNIEnv* env = NULL;
+    JNIEnv *env = nullptr;
 
     LOGI("JNI_OnLoad");
 
@@ -88,6 +87,6 @@ jint JNI_OnLoad(JavaVM* vm, void* reserved) {
 
     result = JNI_VERSION_1_4;
 
-bail:
+    bail:
     return result;
 }
