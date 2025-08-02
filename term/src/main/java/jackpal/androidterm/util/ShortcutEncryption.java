@@ -16,8 +16,6 @@
 
 package jackpal.androidterm.util;
 
-import jackpal.androidterm.compat.Base64;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -30,7 +28,9 @@ import java.nio.charset.CoderResult;
 import java.nio.charset.CodingErrorAction;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.regex.Pattern;
+
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
@@ -86,8 +86,6 @@ public final class ShortcutEncryption {
     public static final int ENC_BLOCKSIZE = 16;
     public static final String MAC_ALGORITHM = "HmacSHA256";
     public static final int KEYLEN = 128;
-    public static final int BASE64_DFLAGS = Base64.DEFAULT;
-    public static final int BASE64_EFLAGS = Base64.NO_PADDING | Base64.NO_WRAP;
 
     private static final String SHORTCUT_KEYS_PREF = "shortcut_keys";
 
@@ -292,7 +290,7 @@ public final class ShortcutEncryption {
      * @return A String with the Base64-encoded data.
      */
     private static String encodeToBase64(byte[] data) {
-        return Base64.encodeToString(data, BASE64_EFLAGS);
+        return Base64.getEncoder().withoutPadding().encodeToString(data);
     }
 
     /**
@@ -303,7 +301,7 @@ public final class ShortcutEncryption {
      * @return A newly-allocated byte[] array with the decoded data.
      */
     private static byte[] decodeBase64(String data) {
-        return Base64.decode(data, BASE64_DFLAGS);
+        return Base64.getDecoder().decode(data);
     }
 
     // Prevent instantiation

@@ -20,8 +20,6 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.view.MenuItem;
 
-import jackpal.androidterm.compat.ActionBarCompat;
-
 public class TermPreferences extends PreferenceActivity {
     private static final String ACTIONBAR_KEY = "actionbar";
     private static final String CATEGORY_SCREEN_KEY = "screen";
@@ -37,7 +35,7 @@ public class TermPreferences extends PreferenceActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case ActionBarCompat.ID_HOME:
+        case android.R.id.home:
             // Action bar home button selected
             finish();
             return true;

@@ -16,6 +16,7 @@
 
 package jackpal.androidterm;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
@@ -63,7 +64,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import jackpal.androidterm.compat.ActionBarCompat;
 import jackpal.androidterm.emulatorview.EmulatorView;
 import jackpal.androidterm.emulatorview.TermSession;
 import jackpal.androidterm.emulatorview.UpdateCallback;
@@ -154,7 +154,7 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
         }
     };
 
-    private ActionBarCompat mActionBar;
+    private ActionBar mActionBar;
     private int mActionBarMode = TermSettings.ACTION_BAR_MODE_NONE;
 
     private WindowListAdapter mWinListAdapter;
@@ -192,7 +192,7 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
         }
     }
 
-    private ActionBarCompat.OnNavigationListener mWinListItemSelected = new ActionBarCompat.OnNavigationListener() {
+    private ActionBar.OnNavigationListener mWinListItemSelected = new ActionBar.OnNavigationListener() {
         public boolean onNavigationItemSelected(int position, long id) {
             int oldPosition = mViewFlipper.getDisplayedChild();
             if (position != oldPosition) {
@@ -353,10 +353,10 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
         WifiManager wm = (WifiManager)getSystemService(Context.WIFI_SERVICE);
         mWifiLock = wm.createWifiLock(WIFI_MODE_FULL_HIGH_PERF, TermDebug.LOG_TAG);
 
-        ActionBarCompat actionBar = new ActionBarCompat(getActionBar());
-        mActionBar = actionBar;
-        actionBar.setNavigationMode(ActionBarCompat.NAVIGATION_MODE_LIST);
-        actionBar.setDisplayOptions(0, ActionBarCompat.DISPLAY_SHOW_TITLE);
+        ActionBar actionBar = getActionBar();
+        mActionBar = getActionBar();
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+        actionBar.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
         if (mActionBarMode == TermSettings.ACTION_BAR_MODE_HIDES) {
             actionBar.hide();
         }
@@ -1017,7 +1017,7 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
     }
 
     private void doToggleActionBar() {
-        ActionBarCompat bar = mActionBar;
+        ActionBar bar = mActionBar;
         if (bar == null) {
             return;
         }

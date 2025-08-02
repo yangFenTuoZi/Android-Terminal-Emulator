@@ -16,29 +16,32 @@
 
 package jackpal.androidterm;
 
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.*;
-import android.content.Intent;
+import android.os.Binder;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Looper;
+import android.os.ParcelFileDescriptor;
+import android.os.ResultReceiver;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
-import android.app.Notification;
-import android.app.PendingIntent;
-
-import jackpal.androidterm.emulatorview.TermSession;
-
-import jackpal.androidterm.compat.ServiceForegroundCompat;
-import jackpal.androidterm.libtermexec.v1.*;
-import jackpal.androidterm.util.SessionList;
-import jackpal.androidterm.util.TermSettings;
 
 import java.util.UUID;
+
+import jackpal.androidterm.emulatorview.TermSession;
+import jackpal.androidterm.libtermexec.v1.ITerminal;
+import jackpal.androidterm.util.SessionList;
+import jackpal.androidterm.util.TermSettings;
 
 public class TermService extends Service implements TermSession.FinishCallback
 {
@@ -46,7 +49,6 @@ public class TermService extends Service implements TermSession.FinishCallback
     private static final int COMPAT_START_STICKY = 1;
 
     private static final int RUNNING_NOTIFICATION = 1;
-    private ServiceForegroundCompat compat;
 
     private SessionList mTermSessions;
 
@@ -90,7 +92,6 @@ public class TermService extends Service implements TermSession.FinishCallback
         editor.putString("home_path", homePath);
         editor.commit();
 
-        compat = new ServiceForegroundCompat(this);
         mTermSessions = new SessionList();
 
         /* Put the service in the foreground. */
@@ -101,7 +102,7 @@ public class TermService extends Service implements TermSession.FinishCallback
 //        notifyIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notifyIntent, 0);
 //        notification.setLatestEventInfo(this, getText(R.string.application_terminal), getText(R.string.service_notify_text), pendingIntent);
-//        compat.startForeground(RUNNING_NOTIFICATION, notification);
+//        startForeground(RUNNING_NOTIFICATION, notification);
 
         Log.d(TermDebug.LOG_TAG, "TermService started");
         return;
@@ -109,7 +110,7 @@ public class TermService extends Service implements TermSession.FinishCallback
 
     @Override
     public void onDestroy() {
-        compat.stopForeground(true);
+        stopForeground(true);
         for (TermSession session : mTermSessions) {
             /* Don't automatically remove from list of sessions -- we clear the
              * list below anyway and we could trigger
