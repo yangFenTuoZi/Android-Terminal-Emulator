@@ -16,10 +16,6 @@
 
 package jackpal.androidterm;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.UUID;
-
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -31,8 +27,11 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import jackpal.androidterm.emulatorview.TermSession;
+import java.io.File;
+import java.io.IOException;
+import java.util.UUID;
 
+import jackpal.androidterm.emulatorview.TermSession;
 import jackpal.androidterm.util.SessionList;
 import jackpal.androidterm.util.TermSettings;
 
@@ -86,7 +85,7 @@ public class RemoteInterface extends Activity {
             TermService service = mTermService;
             if (service != null) {
                 SessionList sessions = service.getSessions();
-                if (sessions == null || sessions.size() == 0) {
+                if (sessions == null || sessions.isEmpty()) {
                     stopService(mTSIntent);
                 }
             }
@@ -112,7 +111,7 @@ public class RemoteInterface extends Activity {
         String action = myIntent.getAction();
         if (action.equals(Intent.ACTION_SEND)
                 && myIntent.hasExtra(Intent.EXTRA_STREAM)) {
-          /* "permission.RUN_SCRIPT" not required as this is merely opening a new window. */
+            /* "permission.RUN_SCRIPT" not required as this is merely opening a new window. */
             Object extraStream = myIntent.getExtras().get(Intent.EXTRA_STREAM);
             if (extraStream instanceof Uri) {
                 String path = ((Uri) extraStream).getPath();
@@ -129,7 +128,7 @@ public class RemoteInterface extends Activity {
     }
 
     /**
-     *  Quote a string so it can be used as a parameter in bash and similar shells.
+     * Quote a string so it can be used as a parameter in bash and similar shells.
      */
     public static String quoteForBash(String s) {
         StringBuilder builder = new StringBuilder();

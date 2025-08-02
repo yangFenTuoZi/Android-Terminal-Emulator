@@ -41,44 +41,44 @@ import javax.crypto.spec.SecretKeySpec;
 /**
  * Implementation of a simple authenticated encryption scheme suitable for
  * TEA shortcuts.
- *
+ * <p>
  * The goals of the encryption are as follows:
- *
- *   (1) An unauthorized actor must not be able to create a valid text with
- *       contents of his choice;
- *   (2) An unauthorized actor must not be able to modify an existing text to
- *       change its contents in any way;
- *   (3) An unauthorized actor must not be able to discover the contents of
- *       an existing text.
- *
+ * <p>
+ * (1) An unauthorized actor must not be able to create a valid text with
+ * contents of his choice;
+ * (2) An unauthorized actor must not be able to modify an existing text to
+ * change its contents in any way;
+ * (3) An unauthorized actor must not be able to discover the contents of
+ * an existing text.
+ * <p>
  * Conditions (1) and (2) ensure that an attacker cannot send commands of his
  * choosing to TEA via the shortcut mechanism, while condition (3) ensures that
  * an attacker cannot learn what commands are being sent via shortcuts even if
  * he can read saved shortcuts or sniff Android intents.
- *
+ * <p>
  * We ensure these conditions using two cryptographic building blocks:
- *
- *   * a symmetric cipher (currently AES in CBC mode using PKCS#5 padding),
- *     which prevents someone without the encryption key from reading the
- *     contents of the shortcut; and
- *   * a message authentication code (currently HMAC-SHA256), which proves that
- *     the shortcut was created by someone with the MAC key.
- *
+ * <p>
+ * * a symmetric cipher (currently AES in CBC mode using PKCS#5 padding),
+ * which prevents someone without the encryption key from reading the
+ * contents of the shortcut; and
+ * * a message authentication code (currently HMAC-SHA256), which proves that
+ * the shortcut was created by someone with the MAC key.
+ * <p>
  * The security of these depends on the security of the keys, which must be
  * kept secret.  In this application, the keys are randomly generated and stored
  * in the application's private shared preferences.
- *
+ * <p>
  * The encrypted string output by this scheme is of the form:
- *
- *     mac + ":" + iv + ":" cipherText
- *
+ * <p>
+ * mac + ":" + iv + ":" cipherText
+ * <p>
  * where:
- *
- *   * cipherText is the Base64-encoded result of encrypting the data
- *     using the encryption key;
- *   * iv is a Base64-encoded, non-secret random number used as an
- *     initialization vector for the encryption algorithm;
- *   * mac is the Base64 encoding of MAC(MAC-key, iv + ":" + cipherText).
+ * <p>
+ * * cipherText is the Base64-encoded result of encrypting the data
+ * using the encryption key;
+ * * iv is a Base64-encoded, non-secret random number used as an
+ * initialization vector for the encryption algorithm;
+ * * mac is the Base64 encoding of MAC(MAC-key, iv + ":" + cipherText).
  */
 public final class ShortcutEncryption {
     public static final String ENC_ALGORITHM = "AES";
@@ -91,28 +91,13 @@ public final class ShortcutEncryption {
 
     private static final Pattern COLON = Pattern.compile(":");
 
-    public static final class Keys {
-        private final SecretKey encKey;
-        private final SecretKey macKey;
-
-        public Keys(SecretKey encKey, SecretKey macKey) {
-            this.encKey = encKey;
-            this.macKey = macKey;
-        }
-
-        public SecretKey getEncKey() {
-            return encKey;
-        }
-
-        public SecretKey getMacKey() {
-            return macKey;
-        }
+    public record Keys(SecretKey encKey, SecretKey macKey) {
 
         /**
          * Outputs the keys as a string of the form
-         *
-         *     encKey + ":" + macKey
-         *
+         * <p>
+         * encKey + ":" + macKey
+         * <p>
          * where encKey and macKey are the Base64-encoded encryption and MAC
          * keys.
          */
@@ -161,7 +146,7 @@ public final class ShortcutEncryption {
 
         SharedPreferences.Editor edit = prefs.edit();
         edit.putString(SHORTCUT_KEYS_PREF, keys.encode());
-        edit.commit();
+        edit.apply();
     }
 
     /**
@@ -189,9 +174,8 @@ public final class ShortcutEncryption {
      * contents have not been tampered with.
      *
      * @param encrypted The string to decrypt, in the format described above.
-     * @param keys The keys to verify and decrypt with.
+     * @param keys      The keys to verify and decrypt with.
      * @return The decrypted data.
-     *
      * @throws GeneralSecurityException if the data is invalid, verification fails, or an error occurs during decryption.
      */
     public static String decrypt(String encrypted, Keys keys) throws GeneralSecurityException {
@@ -206,13 +190,13 @@ public final class ShortcutEncryption {
 
         // Verify that the ciphertext and IV haven't been tampered with first
         String dataToAuth = iv + ":" + cipherText;
-        if (!computeMac(dataToAuth, keys.getMacKey()).equals(mac)) {
+        if (!computeMac(dataToAuth, keys.macKey()).equals(mac)) {
             throw new GeneralSecurityException("Incorrect MAC!");
         }
 
         // Decrypt the ciphertext
         byte[] ivBytes = decodeBase64(iv);
-        cipher.init(Cipher.DECRYPT_MODE, keys.getEncKey(), new IvParameterSpec(ivBytes));
+        cipher.init(Cipher.DECRYPT_MODE, keys.encKey(), new IvParameterSpec(ivBytes));
         byte[] bytes = cipher.doFinal(decodeBase64(cipherText));
 
         // Decode the plaintext bytes into a String
@@ -246,7 +230,6 @@ public final class ShortcutEncryption {
      * @param data The string containing the data to encrypt.
      * @param keys The keys to encrypt and authenticate with.
      * @return The encrypted data.
-     *
      * @throws GeneralSecurityException if an error occurs during encryption.
      */
     public static String encrypt(String data, Keys keys) throws GeneralSecurityException {
@@ -259,13 +242,13 @@ public final class ShortcutEncryption {
         String iv = encodeToBase64(ivBytes);
 
         // Encrypt
-        cipher.init(Cipher.ENCRYPT_MODE, keys.getEncKey(), new IvParameterSpec(ivBytes));
+        cipher.init(Cipher.ENCRYPT_MODE, keys.encKey(), new IvParameterSpec(ivBytes));
         byte[] bytes = data.getBytes();
         String cipherText = encodeToBase64(cipher.doFinal(bytes));
 
         // Calculate the MAC for the ciphertext and IV
         String dataToAuth = iv + ":" + cipherText;
-        String mac = computeMac(dataToAuth, keys.getMacKey());
+        String mac = computeMac(dataToAuth, keys.macKey());
 
         return mac + ":" + dataToAuth;
     }

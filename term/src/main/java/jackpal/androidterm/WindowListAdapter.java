@@ -26,7 +26,6 @@ import android.widget.TextView;
 
 import jackpal.androidterm.emulatorview.TermSession;
 import jackpal.androidterm.emulatorview.UpdateCallback;
-
 import jackpal.androidterm.util.SessionList;
 
 public class WindowListAdapter extends BaseAdapter implements UpdateCallback {
@@ -65,7 +64,7 @@ public class WindowListAdapter extends BaseAdapter implements UpdateCallback {
 
     protected String getSessionTitle(int position, String defaultTitle) {
         TermSession session = mSessions.get(position);
-        if (session != null && session instanceof GenericTermSession) {
+        if (session instanceof GenericTermSession) {
             return ((GenericTermSession) session).getTitle(defaultTitle);
         } else {
             return defaultTitle;
@@ -77,19 +76,17 @@ public class WindowListAdapter extends BaseAdapter implements UpdateCallback {
         View child = act.getLayoutInflater().inflate(R.layout.window_list_item, parent, false);
         View close = child.findViewById(R.id.window_list_close);
 
-        TextView label = (TextView) child.findViewById(R.id.window_list_label);
-        String defaultTitle = act.getString(R.string.window_title, position+1);
+        TextView label = child.findViewById(R.id.window_list_label);
+        String defaultTitle = act.getString(R.string.window_title, position + 1);
         label.setText(getSessionTitle(position, defaultTitle));
 
         final SessionList sessions = mSessions;
         final int closePosition = position;
-        close.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                TermSession session = sessions.remove(closePosition);
-                if (session != null) {
-                    session.finish();
-                    notifyDataSetChanged();
-                }
+        close.setOnClickListener(v -> {
+            TermSession session = sessions.remove(closePosition);
+            if (session != null) {
+                session.finish();
+                notifyDataSetChanged();
             }
         });
 
@@ -105,8 +102,7 @@ public class WindowListAdapter extends BaseAdapter implements UpdateCallback {
             return null;
         } else if (context instanceof Activity) {
             return (Activity) context;
-        } else if (context instanceof ContextWrapper) {
-            ContextWrapper cw = (ContextWrapper) context;
+        } else if (context instanceof ContextWrapper cw) {
             return findActivityFromContext(cw.getBaseContext());
         }
         return null;

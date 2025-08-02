@@ -20,8 +20,7 @@ import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
 
 import jackpal.androidterm.emulatorview.ColorScheme;
 import jackpal.androidterm.emulatorview.TermSession;
@@ -35,8 +34,6 @@ import jackpal.androidterm.util.TermSettings;
 class GenericTermSession extends TermSession {
     //** Set to true to force into 80 x 24 for testing with vttest. */
     private static final boolean VTTEST_MODE = false;
-
-    private static Field descriptorField;
 
     private final long createdAt;
 
@@ -52,11 +49,7 @@ class GenericTermSession extends TermSession {
 
     private String mProcessExitMessage;
 
-    private UpdateCallback mUTF8ModeNotify = new UpdateCallback() {
-        public void onUpdate() {
-            setPtyUTF8Mode(getUTF8Mode());
-        }
-    };
+    private UpdateCallback mUTF8ModeNotify = () -> setPtyUTF8Mode(getUTF8Mode());
 
     GenericTermSession(ParcelFileDescriptor mTermFd, TermSettings settings, boolean exitOnEOF) {
         super(exitOnEOF);
@@ -108,13 +101,9 @@ class GenericTermSession extends TermSession {
         if (mSettings.closeWindowOnProcessExit()) {
             finish();
         } else if (mProcessExitMessage != null) {
-            try {
-                byte[] msg = ("\r\n[" + mProcessExitMessage + "]").getBytes("UTF-8");
-                appendToEmulator(msg, 0, msg.length);
-                notifyUpdate();
-            } catch (UnsupportedEncodingException e) {
-                // Never happens
-            }
+            byte[] msg = ("\r\n[" + mProcessExitMessage + "]").getBytes(StandardCharsets.UTF_8);
+            appendToEmulator(msg, 0, msg.length);
+            notifyUpdate();
         }
     }
 
@@ -135,11 +124,11 @@ class GenericTermSession extends TermSession {
      * be returned instead.
      *
      * @param defaultTitle The default title to use if this session's title is
-     *     unset or an empty string.
+     *                     unset or an empty string.
      */
     public String getTitle(String defaultTitle) {
         String title = getTitle();
-        if (title != null && title.length() > 0) {
+        if (title != null && !title.isEmpty()) {
             return title;
         } else {
             return defaultTitle;

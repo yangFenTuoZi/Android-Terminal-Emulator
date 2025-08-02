@@ -43,10 +43,7 @@ import jackpal.androidterm.libtermexec.v1.ITerminal;
 import jackpal.androidterm.util.SessionList;
 import jackpal.androidterm.util.TermSettings;
 
-public class TermService extends Service implements TermSession.FinishCallback
-{
-    /* Parallels the value of START_STICKY on API Level >= 5 */
-    private static final int COMPAT_START_STICKY = 1;
+public class TermService extends Service implements TermSession.FinishCallback {
 
     private static final int RUNNING_NOTIFICATION = 1;
 
@@ -58,6 +55,7 @@ public class TermService extends Service implements TermSession.FinishCallback
             return TermService.this;
         }
     }
+
     private final IBinder mTSBinder = new TSBinder();
 
     @Override
@@ -66,7 +64,7 @@ public class TermService extends Service implements TermSession.FinishCallback
 
     /* This should be @Override if building with API Level >=5 */
     public int onStartCommand(Intent intent, int flags, int startId) {
-        return COMPAT_START_STICKY;
+        return Service.START_STICKY;
     }
 
     @Override
@@ -90,7 +88,7 @@ public class TermService extends Service implements TermSession.FinishCallback
         String defValue = getDir("HOME", MODE_PRIVATE).getAbsolutePath();
         String homePath = prefs.getString("home_path", defValue);
         editor.putString("home_path", homePath);
-        editor.commit();
+        editor.apply();
 
         mTermSessions = new SessionList();
 
@@ -105,7 +103,6 @@ public class TermService extends Service implements TermSession.FinishCallback
 //        startForeground(RUNNING_NOTIFICATION, notification);
 
         Log.d(TermDebug.LOG_TAG, "TermService started");
-        return;
     }
 
     @Override
@@ -119,7 +116,6 @@ public class TermService extends Service implements TermSession.FinishCallback
             session.finish();
         }
         mTermSessions.clear();
-        return;
     }
 
     public SessionList getSessions() {
@@ -144,14 +140,14 @@ public class TermService extends Service implements TermSession.FinishCallback
                     .putExtra(RemoteInterface.PRIVEXTRA_TARGET_WINDOW, sessionHandle);
 
             final PendingIntent result = PendingIntent.getActivity(getApplicationContext(), sessionHandle.hashCode(),
-                    switchIntent, 0);
+                    switchIntent, PendingIntent.FLAG_IMMUTABLE);
 
             final PackageManager pm = getPackageManager();
             final String[] pkgs = pm.getPackagesForUid(getCallingUid());
-            if (pkgs == null || pkgs.length == 0)
+            if (pkgs == null)
                 return null;
 
-            for (String packageName:pkgs) {
+            for (String packageName : pkgs) {
                 try {
                     final PackageInfo pkgInfo = pm.getPackageInfo(packageName, 0);
 
@@ -164,36 +160,34 @@ public class TermService extends Service implements TermSession.FinishCallback
                     if (!TextUtils.isEmpty(label)) {
                         final String niceName = label.toString();
 
-                        new Handler(Looper.getMainLooper()).post(new Runnable() {
-                            @Override
-                            public void run() {
-                                GenericTermSession session = null;
-                                try {
-                                    final TermSettings settings = new TermSettings(getResources(),
-                                            PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
+                        new Handler(Looper.getMainLooper()).post(() -> {
+                            GenericTermSession session = null;
+                            try {
+                                final TermSettings settings = new TermSettings(getResources(),
+                                        PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
 
-                                    session = new BoundSession(pseudoTerminalMultiplexerFd, settings, niceName);
+                                session = new BoundSession(pseudoTerminalMultiplexerFd, settings, niceName);
 
-                                    mTermSessions.add(session);
+                                mTermSessions.add(session);
 
-                                    session.setHandle(sessionHandle);
-                                    session.setFinishCallback(new RBinderCleanupCallback(result, callback));
-                                    session.setTitle("");
+                                session.setHandle(sessionHandle);
+                                session.setFinishCallback(new RBinderCleanupCallback(result, callback));
+                                session.setTitle("");
 
-                                    session.initializeEmulator(80, 24);
-                                } catch (Exception whatWentWrong) {
-                                    Log.e("TermService", "Failed to bootstrap AIDL session: "
-                                            + whatWentWrong.getMessage());
+                                session.initializeEmulator(80, 24);
+                            } catch (Exception whatWentWrong) {
+                                Log.e("TermService", "Failed to bootstrap AIDL session: "
+                                        + whatWentWrong.getMessage());
 
-                                    if (session != null)
-                                        session.finish();
-                                }
+                                if (session != null)
+                                    session.finish();
                             }
                         });
 
                         return result.getIntentSender();
                     }
-                } catch (PackageManager.NameNotFoundException ignore) {}
+                } catch (PackageManager.NameNotFoundException ignore) {
+                }
             }
 
             return null;

@@ -34,13 +34,10 @@ public class TermPreferences extends PreferenceActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-        case android.R.id.home:
-            // Action bar home button selected
+        if (item.getItemId() == android.R.id.home) {// Action bar home button selected
             finish();
             return true;
-        default:
-            return super.onOptionsItemSelected(item);
         }
+        return super.onOptionsItemSelected(item);
     }
 }

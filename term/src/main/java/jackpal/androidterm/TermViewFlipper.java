@@ -90,12 +90,12 @@ public class TermViewFlipper extends ViewFlipper implements Iterable<View> {
 
     private void commonConstructor(Context context) {
         this.context = context;
-        callbacks = new LinkedList<UpdateCallback>();
+        callbacks = new LinkedList<>();
 
         updateVisibleRect();
         Rect visible = mVisibleRect;
         mChildParams = new LayoutParams(visible.width(), visible.height(),
-            Gravity.TOP|Gravity.LEFT);
+            Gravity.TOP|Gravity.START);
     }
 
     public void updatePrefs(TermSettings settings) {
