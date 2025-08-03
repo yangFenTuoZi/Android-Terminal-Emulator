@@ -18,7 +18,6 @@
     <string name="preferences">환경 설정</string>
     <string name="new_window">새로운 창</string>
     <string name="close_window">창 닫기</string>
-    <string name="window_list">창 목록</string>
     <string name="prev_window">이전 창</string>
     <string name="next_window">다음 창</string>
     <string name="reset">터미널 초기화</string>

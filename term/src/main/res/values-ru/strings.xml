@@ -146,6 +146,5 @@
     <string name="toggle_soft_keyboard">Экранная клавиатура</string>
     <string name="use_keyboard_shortcuts_summary_off">Сочетания клавиш отключены</string>
     <string name="use_keyboard_shortcuts_summary_on">Ctrl-Tab: переключение окон, Ctrl-Shift-N: новое окно, Ctrl-Shift-V: вставить</string>
-    <string name="window_list">Окна</string>
     <string name="window_title">Окно %1$d</string>
 </resources>

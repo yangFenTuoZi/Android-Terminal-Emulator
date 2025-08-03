@@ -18,7 +18,6 @@
     <string name="preferences">Preferências</string>
     <string name="new_window">Nova janela</string>
     <string name="close_window">Fechar janela</string>
-    <string name="window_list">Janelas</string>
     <string name="prev_window">Anterior</string>
     <string name="next_window">Seguinte</string>
     <string name="reset">Repor terminal</string>

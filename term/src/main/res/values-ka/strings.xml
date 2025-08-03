@@ -18,7 +18,6 @@
     <string name="preferences">გამართვა</string>
     <string name="new_window">ახალი ფანჯარა</string>
     <string name="close_window">ფანჯრის დახურვა</string>
-    <string name="window_list">ფანჯრები</string>
     <string name="prev_window">წინა ფანჯარა</string>
     <string name="next_window">შემდეგი ფანჯარა</string>
     <string name="reset">ტერმინალის რესტარტი</string>

@@ -24,9 +24,6 @@
         android:title="@string/close_window"
         android:icon="@drawable/ic_menu_close" />
     <item
-        android:id="@+id/menu_window_list"
-        android:title="@string/window_list" />
-    <item
         android:id="@+id/menu_toggle_soft_keyboard"
         android:title="@string/toggle_soft_keyboard" />
     <item

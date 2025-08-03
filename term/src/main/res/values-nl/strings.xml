@@ -18,7 +18,6 @@
     <string name="preferences">Instellingen</string>
     <string name="new_window">Nieuw venster</string>
     <string name="close_window">Venster sluiten</string>
-    <string name="window_list">Vensters</string>
     <string name="prev_window">Vorig venster</string>
     <string name="next_window">Volgend venster</string>
     <string name="reset">Herstellen</string>

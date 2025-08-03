@@ -104,7 +104,6 @@ public class Term extends AppCompatActivity implements UpdateCallback, SharedPre
 
     private Intent TSIntent;
 
-    public static final int REQUEST_CHOOSE_WINDOW = 1;
     public static final String EXTRA_WINDOW_ID = "jackpal.androidterm.window_id";
     private int onResumeSelectWindow = -1;
     private ComponentName mPrivateAlias;
@@ -640,8 +639,6 @@ public class Term extends AppCompatActivity implements UpdateCallback, SharedPre
             doCreateNewWindow();
         } else if (id == R.id.menu_close_window) {
             confirmCloseWindow();
-        } else if (id == R.id.menu_window_list) {
-            startActivityForResult(new Intent(this, WindowList.class), REQUEST_CHOOSE_WINDOW);
         } else if (id == R.id.menu_reset) {
             doResetTerminal();
             Toast toast = Toast.makeText(this, R.string.reset_toast_notification, Toast.LENGTH_LONG);
@@ -718,30 +715,6 @@ public class Term extends AppCompatActivity implements UpdateCallback, SharedPre
         mViewFlipper.removeView(view);
         if (!mTermSessions.isEmpty()) {
             mViewFlipper.showNext();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int request, int result, Intent data) {
-        super.onActivityResult(request, result, data);
-        if (request == REQUEST_CHOOSE_WINDOW) {
-            if (result == RESULT_OK && data != null) {
-                int position = data.getIntExtra(EXTRA_WINDOW_ID, -2);
-                if (position >= 0) {
-                    // Switch windows after session list is in sync, not here
-                    onResumeSelectWindow = position;
-                } else if (position == -1) {
-                    doCreateNewWindow();
-                    onResumeSelectWindow = mTermSessions.size() - 1;
-                }
-            } else {
-                // Close the activity if user closed all sessions
-                // TODO the left path will be invoked when nothing happened, but this Activity was destroyed!
-                if (mTermSessions == null || mTermSessions.isEmpty()) {
-                    mStopServiceOnFinish = true;
-                    finish();
-                }
-            }
         }
     }
 

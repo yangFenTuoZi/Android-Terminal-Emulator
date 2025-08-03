@@ -18,7 +18,6 @@
     <string name="preferences">Поставке</string>
     <string name="new_window">Нови прозор</string>
     <string name="close_window">Затвори прозор</string>
-    <string name="window_list">Прозори</string>
     <string name="prev_window">Прет. прозор</string>
     <string name="next_window">След. прозор</string>
     <string name="reset">Поново постави терм</string>

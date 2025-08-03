@@ -18,7 +18,6 @@
     <string name="preferences">Innstillinger</string>
     <string name="new_window">Nytt vindu</string>
     <string name="close_window">Lukk vindu</string>
-    <string name="window_list">Vinduer</string>
     <string name="prev_window">Forrige vindu</string>
     <string name="next_window">Neste vindu</string>
     <string name="reset">Tilbakestill terminal</string>

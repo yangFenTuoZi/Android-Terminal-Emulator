@@ -10,10 +10,10 @@
         android:required="false" />
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_SUPERUSER" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
 
     <permission
         android:name="jackpal.androidterm.permission.RUN_SCRIPT"
@@ -105,13 +105,11 @@
         <activity
             android:name="TermPreferences"
             android:label="@string/preferences" />
-        <activity
-            android:name="WindowList"
-            android:label="@string/window_list" />
 
         <service
             android:name="TermService"
-            android:exported="true">
+            android:foregroundServiceType="dataSync"
+            android:exported="false">
             <intent-filter>
                 <action android:name="jackpal.androidterm.action.START_TERM.v1" />
                 <category android:name="android.intent.category.DEFAULT" />

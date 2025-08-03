@@ -18,7 +18,6 @@
     <string name="preferences">Nastavení</string>
     <string name="new_window">Nové okno</string>
     <string name="close_window">Zavřít okno</string>
-    <string name="window_list">Okna</string>
     <string name="prev_window">Predešlé okno</string>
     <string name="next_window">Další okno</string>
     <string name="reset">Reset terminálu</string>

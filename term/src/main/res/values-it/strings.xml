@@ -18,7 +18,6 @@
     <string name="preferences">Impostazioni</string>
     <string name="new_window">Nuova finestra</string>
     <string name="close_window">Chiudi finestra</string>
-    <string name="window_list">Finestre</string>
     <string name="prev_window">Fin. successiva</string>
     <string name="next_window">Fin. precedente</string>
     <string name="reset">Reset terminale</string>

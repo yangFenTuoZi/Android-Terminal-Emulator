@@ -18,7 +18,6 @@
     <string name="preferences">Hobespenak</string>
     <string name="new_window">Leiho berria</string>
     <string name="close_window">Leihoa itxi</string>
-    <string name="window_list">Leihoak</string>
     <string name="prev_window">Aurreko leihoa</string>
     <string name="next_window">Hurrengo leihoa</string>
     <string name="reset">Berrezarri terminala</string>

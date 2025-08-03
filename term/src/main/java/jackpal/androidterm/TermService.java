@@ -16,6 +16,8 @@
 
 package jackpal.androidterm;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
@@ -35,6 +37,7 @@ import android.os.ResultReceiver;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.core.app.NotificationCompat;
 import androidx.preference.PreferenceManager;
 
 import java.util.UUID;
@@ -45,6 +48,8 @@ import jackpal.androidterm.util.SessionList;
 import jackpal.androidterm.util.TermSettings;
 
 public class TermService extends Service implements TermSession.FinishCallback {
+
+    private static final String NOTIFICATION_CHANNEL_ID = "terminal_service_channel";
 
     private static final int RUNNING_NOTIFICATION = 1;
 
@@ -60,10 +65,6 @@ public class TermService extends Service implements TermSession.FinishCallback {
     private final IBinder mTSBinder = new TSBinder();
 
     @Override
-    public void onStart(Intent intent, int flags) {
-    }
-
-    /* This should be @Override if building with API Level >=5 */
     public int onStartCommand(Intent intent, int flags, int startId) {
         return Service.START_STICKY;
     }
@@ -93,15 +94,27 @@ public class TermService extends Service implements TermSession.FinishCallback {
 
         mTermSessions = new SessionList();
 
+        // Create a notification channel for the service.
+        getSystemService(NotificationManager.class)
+                .createNotificationChannel(new NotificationChannel(NOTIFICATION_CHANNEL_ID, getText(R.string.application_terminal), NotificationManager.IMPORTANCE_LOW));
+
+        // Create a notification to show that the service is running.
+        var nb = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
+        nb.setSmallIcon(R.drawable.ic_stat_service_notification_icon);
+        nb.setContentTitle(getText(R.string.application_terminal));
+        nb.setContentText(getText(R.string.service_notify_text));
+        nb.setOngoing(true);
+        nb.setPriority(NotificationCompat.PRIORITY_LOW);
+        nb.setCategory(NotificationCompat.CATEGORY_SERVICE);
+
+        Intent notifyIntent = new Intent(this, Term.class);
+        notifyIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notifyIntent, PendingIntent.FLAG_IMMUTABLE);
+
+        nb.setContentIntent(pendingIntent);
+
         /* Put the service in the foreground. */
-        // TODO fix this to use NotificationChannel on API Level >= 26
-//        Notification notification = new Notification(R.drawable.ic_stat_service_notification_icon, getText(R.string.service_notify_text), System.currentTimeMillis());
-//        notification.flags |= Notification.FLAG_ONGOING_EVENT;
-//        Intent notifyIntent = new Intent(this, Term.class);
-//        notifyIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notifyIntent, 0);
-//        notification.setLatestEventInfo(this, getText(R.string.application_terminal), getText(R.string.service_notify_text), pendingIntent);
-//        startForeground(RUNNING_NOTIFICATION, notification);
+        startForeground(RUNNING_NOTIFICATION, nb.build());
 
         Log.d(TermDebug.LOG_TAG, "TermService started");
     }

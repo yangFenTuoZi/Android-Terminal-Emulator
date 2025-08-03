@@ -4,7 +4,6 @@
     <string name="preferences">Налаштування</string>
     <string name="new_window">Нове вікно</string>
     <string name="close_window">Закрити вікно</string>
-    <string name="window_list">Вікна</string>
     <string name="prev_window">Попереднє вікно</string>
     <string name="next_window">Наступне вікно</string>
     <string name="reset">Скинути термінал</string>

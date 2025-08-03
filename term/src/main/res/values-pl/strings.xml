@@ -18,7 +18,6 @@
     <string name="preferences">Ustawienia</string>
     <string name="new_window">Nowe okno</string>
     <string name="close_window">Zamknij okno</string>
-    <string name="window_list">Okna</string>
     <string name="prev_window">Poprzednie okno</string>
     <string name="next_window">Następne okno</string>
     <string name="reset">Wyczyść terminal</string>
