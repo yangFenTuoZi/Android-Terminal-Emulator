@@ -9,7 +9,6 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -20,6 +19,9 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
+
 import java.io.File;
 import java.security.GeneralSecurityException;
 
@@ -29,7 +31,7 @@ import jackpal.androidterm.RunShortcut;
 import jackpal.androidterm.TermDebug;
 import jackpal.androidterm.util.ShortcutEncryption;
 
-public class AddShortcut extends android.app.Activity {
+public class AddShortcut extends AppCompatActivity {
     private final int OP_MAKE_SHORTCUT = 1;
     private final Context context = this;
     private SharedPreferences SP;

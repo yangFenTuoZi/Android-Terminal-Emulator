@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -22,6 +21,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +31,7 @@ import java.util.HashMap;
 
 import jackpal.androidterm.R;
 
-public class FSNavigator extends android.app.Activity {
+public class FSNavigator extends AppCompatActivity {
     private final int ACTION_THEME_SWAP = 0x00000100;
     private final int BUTTON_SIZE = 150;
     private android.content.Context context = this;

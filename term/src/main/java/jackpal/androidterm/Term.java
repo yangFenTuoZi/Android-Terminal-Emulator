@@ -16,8 +16,6 @@
 
 package jackpal.androidterm;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
@@ -40,7 +38,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -61,6 +58,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 
 import java.io.IOException;
 import java.text.Collator;
@@ -78,7 +78,7 @@ import jackpal.androidterm.util.TermSettings;
  * A terminal emulator activity.
  */
 
-public class Term extends Activity implements UpdateCallback, SharedPreferences.OnSharedPreferenceChangeListener {
+public class Term extends AppCompatActivity implements UpdateCallback, SharedPreferences.OnSharedPreferenceChangeListener {
     /**
      * The ViewFlipper which holds the collection of EmulatorView widgets.
      */
@@ -352,8 +352,8 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
         WifiManager wm = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         mWifiLock = wm.createWifiLock(WIFI_MODE_FULL_HIGH_PERF, TermDebug.LOG_TAG);
 
-        ActionBar actionBar = getActionBar();
-        mActionBar = getActionBar();
+        ActionBar actionBar = getSupportActionBar();
+        mActionBar = actionBar;
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
         actionBar.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
         if (mActionBarMode == TermSettings.ACTION_BAR_MODE_HIDES) {
@@ -723,6 +723,7 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
 
     @Override
     protected void onActivityResult(int request, int result, Intent data) {
+        super.onActivityResult(request, result, data);
         if (request == REQUEST_CHOOSE_WINDOW) {
             if (result == RESULT_OK && data != null) {
                 int position = data.getIntExtra(EXTRA_WINDOW_ID, -2);
@@ -745,7 +746,8 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
+    protected void onNewIntent(@NonNull Intent intent) {
+        super.onNewIntent(intent);
         if ((intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0) {
             // Don't repeat action if intent comes from history
             return;
