@@ -22,6 +22,8 @@ import android.os.Message;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -43,7 +45,7 @@ public class ShellTermSession extends GenericTermSession {
     private static final int PROCESS_EXITED = 1;
     private Handler mMsgHandler = new Handler(Looper.getMainLooper()) {
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(@NonNull Message msg) {
             if (!isRunning()) {
                 return;
             }

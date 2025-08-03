@@ -20,6 +20,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
+import androidx.annotation.NonNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -114,7 +116,7 @@ public class TermSession {
     private boolean mIsRunning = false;
     private Handler mMsgHandler = new Handler(Looper.getMainLooper()) {
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(@NonNull Message msg) {
             if (!mIsRunning) {
                 return;
             }
@@ -183,7 +185,7 @@ public class TermSession {
                         Objects.requireNonNull(Looper.myLooper(), "Writer thread must have a Looper")
                 ) {
                     @Override
-                    public void handleMessage(Message msg) {
+                    public void handleMessage(@NonNull Message msg) {
                         if (msg.what == NEW_OUTPUT) {
                             writeToOutput();
                         } else if (msg.what == FINISH) {

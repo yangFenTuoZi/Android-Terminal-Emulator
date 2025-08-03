@@ -46,6 +46,8 @@ import android.view.inputmethod.ExtractedTextRequest;
 import android.view.inputmethod.InputConnection;
 import android.widget.Scroller;
 
+import androidx.annotation.NonNull;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -1104,7 +1106,7 @@ public class EmulatorView extends View implements GestureDetector.OnGestureListe
 
     // Begin GestureDetector.OnGestureListener methods
 
-    public boolean onSingleTapUp(MotionEvent e) {
+    public boolean onSingleTapUp(@NonNull MotionEvent e) {
         if (mExtGestureListener != null && mExtGestureListener.onSingleTapUp(e)) {
             return true;
         }
@@ -1118,12 +1120,12 @@ public class EmulatorView extends View implements GestureDetector.OnGestureListe
         return true;
     }
 
-    public void onLongPress(MotionEvent e) {
+    public void onLongPress(@NonNull MotionEvent e) {
         // XXX hook into external gesture listener
         showContextMenu();
     }
 
-    public boolean onScroll(MotionEvent e1, MotionEvent e2,
+    public boolean onScroll(MotionEvent e1, @NonNull MotionEvent e2,
                             float distanceX, float distanceY) {
         if (mExtGestureListener != null && mExtGestureListener.onScroll(e1, e2, distanceX, distanceY)) {
             return true;
@@ -1169,7 +1171,7 @@ public class EmulatorView extends View implements GestureDetector.OnGestureListe
         return true;
     }
 
-    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+    public boolean onFling(MotionEvent e1, @NonNull MotionEvent e2, float velocityX,
                            float velocityY) {
         if (mExtGestureListener != null && mExtGestureListener.onFling(e1, e2, velocityX, velocityY)) {
             return true;
@@ -1190,13 +1192,13 @@ public class EmulatorView extends View implements GestureDetector.OnGestureListe
         return true;
     }
 
-    public void onShowPress(MotionEvent e) {
+    public void onShowPress(@NonNull MotionEvent e) {
         if (mExtGestureListener != null) {
             mExtGestureListener.onShowPress(e);
         }
     }
 
-    public boolean onDown(MotionEvent e) {
+    public boolean onDown(@NonNull MotionEvent e) {
         if (mExtGestureListener != null && mExtGestureListener.onDown(e)) {
             return true;
         }
@@ -1498,7 +1500,7 @@ public class EmulatorView extends View implements GestureDetector.OnGestureListe
      * @param canvas The {@link Canvas} to draw the view to.
      */
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(@NonNull Canvas canvas) {
         updateSize(false);
 
         if (mEmulator == null) {

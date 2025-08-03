@@ -60,6 +60,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import java.io.IOException;
 import java.text.Collator;
 import java.util.Arrays;
@@ -164,8 +166,6 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
     }
 
     private class WindowListActionBarAdapter extends WindowListAdapter implements UpdateCallback {
-        // From android.R.style in API 13
-        private static final int TextAppearance_Holo_Widget_ActionBar_Title = 0x01030112;
 
         public WindowListActionBarAdapter(SessionList sessions) {
             super(sessions);
@@ -176,7 +176,7 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
             TextView label = new TextView(Term.this);
             String title = getSessionTitle(position, getString(R.string.window_title, position + 1));
             label.setText(title);
-            label.setTextAppearance(Term.this, TextAppearance_Holo_Widget_ActionBar_Title);
+            label.setTextAppearance(Term.this, android.R.style.TextAppearance_Holo_Widget_ActionBar_Title);
             return label;
         }
 
@@ -217,7 +217,7 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
         }
 
         @Override
-        public boolean onSingleTapUp(MotionEvent e) {
+        public boolean onSingleTapUp(@NonNull MotionEvent e) {
             // Let the EmulatorView handle taps if mouse tracking is active
             if (view.isMouseTrackingActive()) return false;
 
@@ -231,7 +231,7 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
         }
 
         @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        public boolean onFling(MotionEvent e1, @NonNull MotionEvent e2, float velocityX, float velocityY) {
             float absVelocityX = Math.abs(velocityX);
             float absVelocityY = Math.abs(velocityY);
             if (absVelocityX > Math.max(1000.0f, 2.0 * absVelocityY)) {
@@ -607,7 +607,7 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
         mHaveFullHwKeyboard = checkHaveFullHwKeyboard(newConfig);

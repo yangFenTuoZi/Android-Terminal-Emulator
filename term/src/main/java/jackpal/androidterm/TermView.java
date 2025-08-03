@@ -19,10 +19,11 @@ package jackpal.androidterm;
 import android.content.Context;
 import android.util.DisplayMetrics;
 
+import androidx.annotation.NonNull;
+
 import jackpal.androidterm.emulatorview.ColorScheme;
 import jackpal.androidterm.emulatorview.EmulatorView;
 import jackpal.androidterm.emulatorview.TermSession;
-
 import jackpal.androidterm.util.TermSettings;
 
 public class TermView extends EmulatorView {
@@ -50,6 +51,7 @@ public class TermView extends EmulatorView {
         updatePrefs(settings, null);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return getClass().toString() + '(' + getTermSession() + ')';

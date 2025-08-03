@@ -16,6 +16,8 @@
 
 package jackpal.androidterm.util;
 
+import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -86,7 +88,7 @@ public class SessionList extends ArrayList<TermSession> {
     }
 
     @Override
-    public boolean addAll(Collection<? extends TermSession> collection) {
+    public boolean addAll(@NonNull Collection<? extends TermSession> collection) {
         boolean result = super.addAll(collection);
         for (TermSession session : collection) {
             session.setTitleChangedListener(mTitleChangedListener);

@@ -26,6 +26,8 @@ import android.view.View;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
+import androidx.annotation.NonNull;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -105,6 +107,7 @@ public class TermViewFlipper extends ViewFlipper implements Iterable<View> {
         mStatusBarVisible = statusBarVisible;
     }
 
+    @NonNull
     public Iterator<View> iterator() {
         return new ViewFlipperIterator();
     }
@@ -292,7 +295,7 @@ public class TermViewFlipper extends ViewFlipper implements Iterable<View> {
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(@NonNull Canvas canvas) {
         if (mRedoLayout) {
             requestLayout();
             mRedoLayout = false;

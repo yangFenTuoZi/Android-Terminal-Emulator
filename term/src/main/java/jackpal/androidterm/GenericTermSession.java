@@ -19,6 +19,8 @@ package jackpal.androidterm;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
@@ -146,6 +148,7 @@ class GenericTermSession extends TermSession {
         return mHandle;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return getClass().getSimpleName() + '(' + createdAt + ',' + mHandle + ')';
