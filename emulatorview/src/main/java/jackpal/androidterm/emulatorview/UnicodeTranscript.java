@@ -16,11 +16,11 @@
 
 package jackpal.androidterm.emulatorview;
 
+import android.icu.lang.UCharacter;
+import android.icu.lang.UProperty;
 import android.util.Log;
 
 import java.util.Arrays;
-
-import jackpal.androidterm.emulatorview.compat.AndroidCharacterCompat;
 
 /**
  * A backing store for a TranscriptScreen.
@@ -530,9 +530,9 @@ class UnicodeTranscript {
         }
         if (Character.charCount(codePoint) == 1) {
             // Android's getEastAsianWidth() only works for BMP characters
-            switch (AndroidCharacterCompat.getEastAsianWidth((char) codePoint)) {
-                case AndroidCharacterCompat.EAST_ASIAN_WIDTH_FULL_WIDTH:
-                case AndroidCharacterCompat.EAST_ASIAN_WIDTH_WIDE:
+            switch (UCharacter.getIntPropertyValue(codePoint, UProperty.EAST_ASIAN_WIDTH)) {
+                case UCharacter.EastAsianWidth.FULLWIDTH:
+                case UCharacter.EastAsianWidth.WIDE:
                     return 2;
             }
         } else {

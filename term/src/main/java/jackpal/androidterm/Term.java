@@ -21,6 +21,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
+import android.content.ClipData;
+import android.content.ClipDescription;
+import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -66,7 +69,6 @@ import java.util.Locale;
 import jackpal.androidterm.emulatorview.EmulatorView;
 import jackpal.androidterm.emulatorview.TermSession;
 import jackpal.androidterm.emulatorview.UpdateCallback;
-import jackpal.androidterm.emulatorview.compat.ClipboardManagerCompat;
 import jackpal.androidterm.util.SessionList;
 import jackpal.androidterm.util.TermSettings;
 
@@ -883,8 +885,9 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
     }
 
     private boolean canPaste() {
-        ClipboardManagerCompat clip = new ClipboardManagerCompat(getApplicationContext());
-        return clip.hasText();
+        var clip = getSystemService(ClipboardManager.class);
+        var clipDescription = clip.getPrimaryClipDescription();
+        return clip.hasPrimaryClip() && clipDescription != null && clipDescription.hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN);
     }
 
     private void doPreferences() {
@@ -929,17 +932,19 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
     }
 
     private void doCopyAll() {
-        ClipboardManagerCompat clip = new ClipboardManagerCompat(getApplicationContext());
-        clip.setText(getCurrentTermSession().getTranscriptText().trim());
+        getSystemService(ClipboardManager.class)
+                .setPrimaryClip(ClipData.newPlainText("terminalText", getCurrentTermSession().getTranscriptText().trim()));
     }
 
     private void doPaste() {
         if (!canPaste()) {
             return;
         }
-        ClipboardManagerCompat clip = new ClipboardManagerCompat(getApplicationContext());
-        CharSequence paste = clip.getText();
-        getCurrentTermSession().write(paste.toString());
+        var primaryClip = getSystemService(ClipboardManager.class).getPrimaryClip();
+        if (primaryClip != null && primaryClip.getItemCount() > 0) {
+            ClipData.Item item = primaryClip.getItemAt(0);
+            getCurrentTermSession().write(item.getText().toString());
+        }
     }
 
     private void doSendControlKey() {

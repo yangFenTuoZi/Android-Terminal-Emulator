@@ -16,6 +16,8 @@
 
 package jackpal.androidterm.emulatorview;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -30,6 +32,7 @@ import android.text.util.Linkify.MatchFilter;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -47,9 +50,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Objects;
-
-import jackpal.androidterm.emulatorview.compat.ClipboardManagerCompat;
-import jackpal.androidterm.emulatorview.compat.Patterns;
 
 /**
  * A view on a {@link TermSession}.  Displays the terminal emulator's screen,
@@ -1241,8 +1241,8 @@ public class EmulatorView extends View implements GestureDetector.OnGestureListe
                 mSelX2 = maxx;
                 mSelY2 = maxy;
                 if (action == MotionEvent.ACTION_UP) {
-                    ClipboardManagerCompat clip = new ClipboardManagerCompat(getContext().getApplicationContext());
-                    clip.setText(getSelectedText().trim());
+                    getContext().getSystemService(ClipboardManager.class)
+                            .setPrimaryClip(ClipData.newPlainText("terminalText", getSelectedText().trim()));
                     toggleSelectingText();
                 }
                 invalidate();

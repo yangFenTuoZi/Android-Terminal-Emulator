@@ -49,5 +49,5 @@
         android:paddingStart="15dp"
         android:paddingEnd="15dp"
         android:scaleType="center"
-        android:src="@drawable/btn_close_window" />
+        android:src="@drawable/ic_menu_close" />
 </LinearLayout>
