@@ -64,42 +64,34 @@ public class AddShortcut extends android.app.Activity {
         et[NAME].setText(name);
         et[ARGS].setHint(getString(R.string.addshortcut_example_hint));//"--example=\"a\"");
         et[ARGS].setOnFocusChangeListener((view, focus) -> {
-                    if (!focus) {
-                        String s;
-                        if (
-                                et[NAME].getText().toString().isEmpty()
-                                        && !(s = et[ARGS].getText().toString()).isEmpty()
-                        )
-                            et[NAME].setText(s.split("\\s")[0]);
-                    }
-                }
-        );
+            if (!focus) {
+                String s;
+                if (et[NAME].getText().toString().isEmpty() && !(s = et[ARGS].getText().toString()).isEmpty())
+                    et[NAME].setText(s.split("\\s")[0]);
+            }
+        });
 
         Button btn_path = new Button(context);
         btn_path.setText(getString(R.string.addshortcut_button_find_command));//"Find command");
         btn_path.setOnClickListener(p1 -> {
-                    String lastPath = SP.getString("lastPath", null);
-                    File get = (lastPath == null)
-                            ? Environment.getExternalStorageDirectory()
-                            : new File(lastPath).getParentFile();
-                    Intent pickerIntent = new Intent();
-                    if (SP.getBoolean("useInternalScriptFinder", false)) {
-                        pickerIntent.setClass(getApplicationContext(), FSNavigator.class)
-                                .setData(Uri.fromFile(get))
-                                .putExtra("title", getString(R.string.addshortcut_navigator_title));//"SELECT SHORTCUT TARGET")
-                    } else {
-                        pickerIntent
-                                .putExtra("CONTENT_TYPE", "*/*")
-                                .setAction(Intent.ACTION_PICK);
-                    }
-                    startActivityForResult(pickerIntent, OP_MAKE_SHORTCUT);
-                }
-        );
-        lv.addView(layoutTextViewH(
-                getString(R.string.addshortcut_command_window_instructions)//"Command window requires full path, no arguments. For other commands use Arguments window (ex: cd /sdcard)."
-                , null
-                , false
-        ));
+            String lastPath = SP.getString("lastPath", null);
+            File get = (lastPath == null)
+                    ? Environment.getExternalStorageDirectory()
+                    : new File(lastPath).getParentFile();
+            Intent pickerIntent = new Intent();
+            if (SP.getBoolean("useInternalScriptFinder", false)) {
+                pickerIntent.setClass(getApplicationContext(), FSNavigator.class)
+                        .setData(Uri.fromFile(get))
+                        .putExtra("title", getString(R.string.addshortcut_navigator_title));//"SELECT SHORTCUT TARGET")
+            } else {
+                pickerIntent.putExtra("CONTENT_TYPE", "*/*")
+                        .setAction(Intent.ACTION_PICK);
+            }
+            startActivityForResult(pickerIntent, OP_MAKE_SHORTCUT);
+        });
+        lv.addView(layoutTextViewH(getString(R.string.addshortcut_command_window_instructions), //"Command window requires full path, no arguments. For other commands use Arguments window (ex: cd /sdcard)."
+                null,
+                false));
         lv.addView(layoutViewViewH(btn_path, et[PATH]));
         lv.addView(layoutTextViewH(getString(R.string.addshortcut_arguments_label), et[ARGS]));
         lv.addView(layoutTextViewH(getString(R.string.addshortcut_shortcut_label), et[NAME]));
@@ -113,15 +105,10 @@ public class AddShortcut extends android.app.Activity {
         img.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         final Button btn_color = new Button(context);
         btn_color.setText(getString(R.string.addshortcut_button_text_icon));//"Text icon");
-        btn_color.setOnClickListener(p1 -> new ColorValue(context, img, iconText)
-        );
-        lv.addView(
-                layoutTextViewH(
-                        getString(R.string.addshortcut_text_icon_instructions)//"Optionally create a text icon:"
-                        , null
-                        , false
-                )
-        );
+        btn_color.setOnClickListener(p1 -> new ColorValue(context, img, iconText));
+        lv.addView(layoutTextViewH(getString(R.string.addshortcut_text_icon_instructions), //"Optionally create a text icon:"
+                null,
+                false));
         lv.addView(layoutViewViewH(btn_color, img));
         final ScrollView sv = new ScrollView(context);
         sv.setFillViewport(true);
@@ -129,20 +116,9 @@ public class AddShortcut extends android.app.Activity {
 
         alert.setView(sv);
         alert.setTitle(getString(R.string.addshortcut_title));//"Term Shortcut");
-        alert.setPositiveButton(
-                android.R.string.yes
-                , (dialog, which) -> buildShortcut(
-                        path
-                        , et[ARGS].getText().toString()
-                        , et[NAME].getText().toString()
-                        , iconText[1]
-                        , (Integer) img.getTag()
-                )
-        );
-        alert.setNegativeButton(
-                android.R.string.cancel
-                , (dialog, which) -> finish()
-        );
+        alert.setPositiveButton(android.R.string.yes,
+                (dialog, which) -> buildShortcut(path, et[ARGS].getText().toString(), et[NAME].getText().toString(), iconText[1], (Integer) img.getTag()));
+        alert.setNegativeButton(android.R.string.cancel, (dialog, which) -> finish());
         alert.show();
     }
 
@@ -154,8 +130,10 @@ public class AddShortcut extends android.app.Activity {
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1);
         TextView tv = new TextView(context);
         tv.setText(text);
-        if (attributes) tv.setTypeface(Typeface.DEFAULT_BOLD);
-        if (attributes) tv.setGravity(Gravity.END | Gravity.CENTER_VERTICAL);
+        if (attributes) {
+            tv.setTypeface(Typeface.DEFAULT_BOLD);
+            tv.setGravity(Gravity.END | Gravity.CENTER_VERTICAL);
+        }
         tv.setPadding(10, tv.getPaddingTop(), 10, tv.getPaddingBottom());
         LinearLayout lh = new LinearLayout(context);
         lh.setOrientation(LinearLayout.HORIZONTAL);
@@ -173,13 +151,7 @@ public class AddShortcut extends android.app.Activity {
         return (lh);
     }
 
-    void buildShortcut(
-            String path
-            , String arguments
-            , String shortcutName
-            , String shortcutText
-            , int shortcutColor
-    ) {
+    void buildShortcut(String path, String arguments, String shortcutName, String shortcutText, int shortcutColor) {
         ShortcutEncryption.Keys keys = ShortcutEncryption.getKeys(context);
         if (keys == null) {
             try {
@@ -213,20 +185,9 @@ public class AddShortcut extends android.app.Activity {
             wrapper.putExtra(Intent.EXTRA_SHORTCUT_NAME, shortcutName);
         }
         if (shortcutText != null && !shortcutText.isEmpty()) {
-            wrapper.putExtra(
-                    Intent.EXTRA_SHORTCUT_ICON
-                    , TextIcon.getTextIcon(
-                            shortcutText
-                            , shortcutColor
-                            , 96
-                            , 96
-                    )
-            );
+            wrapper.putExtra(Intent.EXTRA_SHORTCUT_ICON, TextIcon.getTextIcon(shortcutText, shortcutColor, 96, 96));
         } else {
-            wrapper.putExtra(
-                    Intent.EXTRA_SHORTCUT_ICON_RESOURCE
-                    , Intent.ShortcutIconResource.fromContext(context, jackpal.androidterm.R.drawable.ic_launcher)
-            );
+            wrapper.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, Intent.ShortcutIconResource.fromContext(context, jackpal.androidterm.R.drawable.ic_launcher));
         }
         setResult(RESULT_OK, wrapper);
         finish();

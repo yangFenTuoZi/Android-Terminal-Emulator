@@ -111,12 +111,10 @@ public class FSNavigator extends android.app.Activity {
     private String ifAvailable(String goTo) {
         if (goTo.startsWith(extSdCard)) {
             String s = Environment.getExternalStorageState();
-            if (s.equals(Environment.MEDIA_MOUNTED)
-                    || s.equals(Environment.MEDIA_MOUNTED_READ_ONLY)
-            ) {
+            if (s.equals(Environment.MEDIA_MOUNTED) || s.equals(Environment.MEDIA_MOUNTED_READ_ONLY)) {
                 return (goTo);
             }
-            toast(getString(R.string.fsnavigator_no_external_storage), 1);//"External storage not available", 1);
+            toast(getString(R.string.fsnavigator_no_external_storage), Toast.LENGTH_LONG);//"External storage not available", 1);
             return (extSdCard);
         }
         return (goTo);
@@ -138,13 +136,7 @@ public class FSNavigator extends android.app.Activity {
             tv = cachedDividerView.get(countDividerView);
         } else {
             tv = new TextView(context);
-            tv.setLayoutParams(
-                    new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT
-                            , 1
-                            , 1
-                    )
-            );
+            tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1, 1));
             cachedDividerView.put(countDividerView, tv);
         }
         ++countDividerView;
@@ -163,66 +155,40 @@ public class FSNavigator extends android.app.Activity {
 
     private LinearLayout fileView(boolean entryWindow) {
         LinearLayout ll = new LinearLayout(context);
-        ll.setLayoutParams(
-                new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT
-                        , LinearLayout.LayoutParams.WRAP_CONTENT
-                        , 1
-                )
-        );
+        ll.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
         ll.setOrientation(LinearLayout.HORIZONTAL);
         ll.setGravity(android.view.Gravity.FILL);
         final TextView tv;
         if (entryWindow) {
             tv = new EditText(context);
             tv.setHint(getString(R.string.fsnavigator_optional_enter_path));
-            tv.setLayoutParams(
-                    new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT
-                            , LinearLayout.LayoutParams.MATCH_PARENT
-                            , 2
-                    )
-            );
-            tv.setOnKeyListener(
-                    (v, keyCode, event) -> {
-                        if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                            String path = tv.getText().toString();
-                            File file = new File(getCanonicalPath(path));
-                            chdir(file.getParentFile() == null ? file : file.getParentFile());
-                            if (file.isFile()) {
-                                setResult(RESULT_OK, getIntent().setData(Uri.fromFile(file)));
-                                finish();
-                            } else {
-                                chdir(file);
-                                makeView();
-                            }
-                            return (true);
-                        }
-                        return (false);
+            tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 2));
+            tv.setOnKeyListener((v, keyCode, event) -> {
+                if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                    String path = tv.getText().toString();
+                    File file = new File(getCanonicalPath(path));
+                    chdir(file.getParentFile() == null ? file : file.getParentFile());
+                    if (file.isFile()) {
+                        setResult(RESULT_OK, getIntent().setData(Uri.fromFile(file)));
+                        finish();
+                    } else {
+                        chdir(file);
+                        makeView();
                     }
-            );
+                    return (true);
+                }
+                return (false);
+            });
             ll.addView(tv);
         } else {
             tv = new TextView(context);
             tv.setClickable(true);
             tv.setLongClickable(true);
             tv.setOnClickListener(fileListener);
-            tv.setLayoutParams(
-                    new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT
-                            , LinearLayout.LayoutParams.MATCH_PARENT
-                            , 1
-                    )
-            );
+            tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT, 1));
             HorizontalScrollView hv = new HorizontalScrollView(context);
             hv.setFillViewport(true);
-            hv.setLayoutParams(
-                    new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT
-                            , BUTTON_SIZE
-                            , 7
-                    )
-            );
+            hv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, BUTTON_SIZE, 7));
             hv.addView(tv);
             ll.addView(hv);
         }
@@ -256,13 +222,7 @@ public class FSNavigator extends android.app.Activity {
         b1.setClickable(true);
         b1.setFocusable(true);
         b1.setId(R.id.imageview);
-        b1.setLayoutParams(
-                new LinearLayout.LayoutParams(
-                        120
-                        , 120
-                        , 1
-                )
-        );
+        b1.setLayoutParams(new LinearLayout.LayoutParams(120, 120, 1));
         b1.setImageResource(up ? R.drawable.ic_folderup : R.drawable.ic_folder);
         b1.setOnClickListener(directoryListener);
         b1.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
@@ -294,33 +254,15 @@ public class FSNavigator extends android.app.Activity {
         tv.setTextSize(textLg);
         tv.setPadding(10, 5, 10, 5);
         tv.setId(R.id.textview);
-        tv.setLayoutParams(
-                new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT
-                        , BUTTON_SIZE
-                        , 1
-                )
-        );
+        tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, BUTTON_SIZE, 1));
         HorizontalScrollView hv = new HorizontalScrollView(context);
         hv.addView(tv);
         hv.setFillViewport(true);
         hv.setFocusable(true);
         hv.setOnClickListener(directoryListener);
-        hv.setLayoutParams(
-                new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT
-                        , BUTTON_SIZE
-                        , 7
-                )
-        );
+        hv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, BUTTON_SIZE, 7));
         LinearLayout ll = new LinearLayout(context);
-        ll.setLayoutParams(
-                new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT
-                        , BUTTON_SIZE
-                        , 2
-                )
-        );
+        ll.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, BUTTON_SIZE, 2));
         ll.setOrientation(LinearLayout.HORIZONTAL);
         ll.setGravity(android.view.Gravity.FILL);
         ll.setOnClickListener(directoryListener);
@@ -347,9 +289,7 @@ public class FSNavigator extends android.app.Activity {
 
         TextView tv = ll.findViewById(R.id.textview);
         tv.setTag(name);
-        tv.setText(up ? "[" + cd.getPath() + "]"
-                : name
-        );
+        tv.setText(up ? "[" + cd.getPath() + "]" : name);
         ll.findViewById(R.id.imageview).setTag(name);
         return (ll);
     }
@@ -363,46 +303,22 @@ public class FSNavigator extends android.app.Activity {
 
     private LinearLayout makeContentView() {
         final LinearLayout ll = new LinearLayout(context);
-        ll.setLayoutParams(
-                new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT
-                        , LinearLayout.LayoutParams.WRAP_CONTENT
-                        , 1
-                )
-        );
+        ll.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
         ll.setId(R.id.mainview);
         ll.setOrientation(LinearLayout.VERTICAL);
         ll.setGravity(android.view.Gravity.FILL);
         final ScrollView sv = new ScrollView(context);
         sv.setId(R.id.scrollview);
-        sv.setLayoutParams(
-                new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT
-                        , LinearLayout.LayoutParams.WRAP_CONTENT
-                        , 1
-                )
-        );
+        sv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
         sv.addView(ll);
         final LinearLayout bg = new LinearLayout(context);
-        bg.setLayoutParams(
-                new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT
-                        , LinearLayout.LayoutParams.WRAP_CONTENT
-                        , 1
-                )
-        );
+        bg.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
         bg.setOrientation(LinearLayout.VERTICAL);
         bg.setGravity(android.view.Gravity.FILL);
         bg.setTag(ll);
-        bg.addView(
-                titleView
-                , android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-        );
+        bg.addView(titleView, android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
         bg.addView(sv);
-        bg.addView(
-                pathEntryView
-                , android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-        );
+        bg.addView(pathEntryView, android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
         return (bg);
     }
 
@@ -487,8 +403,6 @@ public class FSNavigator extends android.app.Activity {
 
     //  private void toast(final String message){toast(message, 0);}
     private void toast(final String message, final int duration) {
-        runOnUiThread(
-                () -> Toast.makeText(context, message, duration == 0 ? Toast.LENGTH_SHORT : Toast.LENGTH_LONG).show()
-        );
+        runOnUiThread(() -> Toast.makeText(context, message, duration).show());
     }
 }

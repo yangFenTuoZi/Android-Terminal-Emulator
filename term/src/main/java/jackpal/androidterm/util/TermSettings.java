@@ -81,31 +81,31 @@ public class TermSettings {
     private static final String MOUSE_TRACKING = "mouse_tracking";
     private static final String USE_KEYBOARD_SHORTCUTS = "use_keyboard_shortcuts";
 
-    public static final int WHITE               = 0xffffffff;
-    public static final int BLACK               = 0xff000000;
-    public static final int BLUE                = 0xff344ebd;
-    public static final int GREEN               = 0xff00ff00;
-    public static final int AMBER               = 0xffffb651;
-    public static final int RED                 = 0xffff0113;
-    public static final int HOLO_BLUE           = 0xff33b5e5;
-    public static final int SOLARIZED_FG        = 0xff657b83;
-    public static final int SOLARIZED_BG        = 0xfffdf6e3;
-    public static final int SOLARIZED_DARK_FG   = 0xff839496;
-    public static final int SOLARIZED_DARK_BG   = 0xff002b36;
+    public static final int WHITE = 0xffffffff;
+    public static final int BLACK = 0xff000000;
+    public static final int BLUE = 0xff344ebd;
+    public static final int GREEN = 0xff00ff00;
+    public static final int AMBER = 0xffffb651;
+    public static final int RED = 0xffff0113;
+    public static final int HOLO_BLUE = 0xff33b5e5;
+    public static final int SOLARIZED_FG = 0xff657b83;
+    public static final int SOLARIZED_BG = 0xfffdf6e3;
+    public static final int SOLARIZED_DARK_FG = 0xff839496;
+    public static final int SOLARIZED_DARK_BG = 0xff002b36;
     public static final int LINUX_CONSOLE_WHITE = 0xffaaaaaa;
 
     // foreground color, background color
     public static final int[][] COLOR_SCHEMES = {
-        {BLACK,             WHITE},
-        {WHITE,             BLACK},
-        {WHITE,             BLUE},
-        {GREEN,             BLACK},
-        {AMBER,             BLACK},
-        {RED,               BLACK},
-        {HOLO_BLUE,         BLACK},
-        {SOLARIZED_FG,      SOLARIZED_BG},
-        {SOLARIZED_DARK_FG, SOLARIZED_DARK_BG},
-        {LINUX_CONSOLE_WHITE, BLACK}
+            {BLACK, WHITE},
+            {WHITE, BLACK},
+            {WHITE, BLUE},
+            {GREEN, BLACK},
+            {AMBER, BLACK},
+            {RED, BLACK},
+            {HOLO_BLUE, BLACK},
+            {SOLARIZED_FG, SOLARIZED_BG},
+            {SOLARIZED_DARK_FG, SOLARIZED_DARK_BG},
+            {LINUX_CONSOLE_WHITE, BLACK}
     };
 
     public static final int ACTION_BAR_MODE_NONE = 0;
@@ -117,31 +117,33 @@ public class TermSettings {
     public static final int ORIENTATION_LANDSCAPE = 1;
     public static final int ORIENTATION_PORTRAIT = 2;
 
-    /** An integer not in the range of real key codes. */
+    /**
+     * An integer not in the range of real key codes.
+     */
     public static final int KEYCODE_NONE = -1;
 
     public static final int CONTROL_KEY_ID_NONE = 7;
     public static final int[] CONTROL_KEY_SCHEMES = {
-        KeyEvent.KEYCODE_DPAD_CENTER,
-        KeyEvent.KEYCODE_AT,
-        KeyEvent.KEYCODE_ALT_LEFT,
-        KeyEvent.KEYCODE_ALT_RIGHT,
-        KeyEvent.KEYCODE_VOLUME_UP,
-        KeyEvent.KEYCODE_VOLUME_DOWN,
-        KeyEvent.KEYCODE_CAMERA,
-        KEYCODE_NONE
+            KeyEvent.KEYCODE_DPAD_CENTER,
+            KeyEvent.KEYCODE_AT,
+            KeyEvent.KEYCODE_ALT_LEFT,
+            KeyEvent.KEYCODE_ALT_RIGHT,
+            KeyEvent.KEYCODE_VOLUME_UP,
+            KeyEvent.KEYCODE_VOLUME_DOWN,
+            KeyEvent.KEYCODE_CAMERA,
+            KEYCODE_NONE
     };
 
     public static final int FN_KEY_ID_NONE = 7;
     public static final int[] FN_KEY_SCHEMES = {
-        KeyEvent.KEYCODE_DPAD_CENTER,
-        KeyEvent.KEYCODE_AT,
-        KeyEvent.KEYCODE_ALT_LEFT,
-        KeyEvent.KEYCODE_ALT_RIGHT,
-        KeyEvent.KEYCODE_VOLUME_UP,
-        KeyEvent.KEYCODE_VOLUME_DOWN,
-        KeyEvent.KEYCODE_CAMERA,
-        KEYCODE_NONE
+            KeyEvent.KEYCODE_DPAD_CENTER,
+            KeyEvent.KEYCODE_AT,
+            KeyEvent.KEYCODE_ALT_LEFT,
+            KeyEvent.KEYCODE_ALT_RIGHT,
+            KeyEvent.KEYCODE_VOLUME_UP,
+            KeyEvent.KEYCODE_VOLUME_DOWN,
+            KeyEvent.KEYCODE_CAMERA,
+            KEYCODE_NONE
     };
 
     public static final int BACK_KEY_STOPS_SERVICE = 0;
@@ -218,7 +220,7 @@ public class TermSettings {
         int val;
         try {
             val = Integer.parseInt(
-                mPrefs.getString(key, Integer.toString(defaultValue)));
+                    mPrefs.getString(key, Integer.toString(defaultValue)));
         } catch (NumberFormatException e) {
             val = defaultValue;
         }
