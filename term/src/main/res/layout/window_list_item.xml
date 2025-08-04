@@ -17,37 +17,39 @@
 -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal">
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="15dp"
+    android:paddingEnd="15dp">
+
+    <com.google.android.material.radiobutton.MaterialRadioButton
+        android:id="@+id/radio_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:focusable="false" />
 
     <TextView
         android:id="@+id/window_list_label"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
         android:maxLines="1"
-        android:padding="15dp"
         android:singleLine="true"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <View
-        android:id="@+id/window_list_separator"
-        android:layout_width="1dp"
-        android:layout_height="match_parent"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:background="#ff313431" />
-
-    <view
+    <jackpal.androidterm.WindowListCloseButton
         android:id="@+id/window_list_close"
-        class="jackpal.androidterm.WindowListCloseButton"
+        style="?attr/materialIconButtonStyle"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:background="@drawable/close_background"
-        android:paddingStart="15dp"
-        android:paddingEnd="15dp"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:contentDescription="@string/close_window"
+        android:focusable="false"
         android:scaleType="center"
-        android:src="@drawable/ic_menu_close" />
+        app:icon="@drawable/ic_menu_close"
+        app:iconSize="24dp" />
 </LinearLayout>

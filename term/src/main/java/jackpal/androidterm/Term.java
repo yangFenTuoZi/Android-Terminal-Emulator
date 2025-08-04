@@ -16,7 +16,6 @@
 
 package jackpal.androidterm;
 
-import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
@@ -50,17 +49,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.TextView;
+import android.widget.AdapterView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
+
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.IOException;
 import java.text.Collator;
@@ -113,8 +113,6 @@ public class Term extends AppCompatActivity implements UpdateCallback, SharedPre
     // Available on API 12 and later
     private static final int WIFI_MODE_FULL_HIGH_PERF = 3;
 
-    private boolean mBackKeyPressed;
-
     private static final String ACTION_PATH_BROADCAST = "jackpal.androidterm.broadcast.APPEND_TO_PATH";
     private static final String ACTION_PATH_PREPEND_BROADCAST = "jackpal.androidterm.broadcast.PREPEND_TO_PATH";
     private static final String PERMISSION_PATH_BROADCAST = "jackpal.androidterm.permission.APPEND_TO_PATH";
@@ -164,34 +162,9 @@ public class Term extends AppCompatActivity implements UpdateCallback, SharedPre
         mSettings.readPrefs(sharedPreferences);
     }
 
-    private class WindowListActionBarAdapter extends WindowListAdapter implements UpdateCallback {
-
-        public WindowListActionBarAdapter(SessionList sessions) {
-            super(sessions);
-        }
-
+    private AdapterView.OnItemSelectedListener mWinListItemSelected = new AdapterView.OnItemSelectedListener() {
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            TextView label = new TextView(Term.this);
-            String title = getSessionTitle(position, getString(R.string.window_title, position + 1));
-            label.setText(title);
-            label.setTextAppearance(Term.this, android.R.style.TextAppearance_Holo_Widget_ActionBar_Title);
-            return label;
-        }
-
-        @Override
-        public View getDropDownView(int position, View convertView, ViewGroup parent) {
-            return super.getView(position, convertView, parent);
-        }
-
-        public void onUpdate() {
-            notifyDataSetChanged();
-            mActionBar.setSelectedNavigationItem(mViewFlipper.getDisplayedChild());
-        }
-    }
-
-    private ActionBar.OnNavigationListener mWinListItemSelected = new ActionBar.OnNavigationListener() {
-        public boolean onNavigationItemSelected(int position, long id) {
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             int oldPosition = mViewFlipper.getDisplayedChild();
             if (position != oldPosition) {
                 if (position >= mViewFlipper.getChildCount()) {
@@ -202,7 +175,10 @@ public class Term extends AppCompatActivity implements UpdateCallback, SharedPre
                     mActionBar.hide();
                 }
             }
-            return true;
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
         }
     };
 
@@ -345,6 +321,8 @@ public class Term extends AppCompatActivity implements UpdateCallback, SharedPre
 
         setContentView(R.layout.term_activity);
         mViewFlipper = findViewById(VIEW_FLIPPER);
+        if (mWinListAdapter != null)
+            mWinListAdapter.setTermViewFlipper(mViewFlipper);
 
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TermDebug.LOG_TAG);
@@ -353,8 +331,6 @@ public class Term extends AppCompatActivity implements UpdateCallback, SharedPre
 
         ActionBar actionBar = getSupportActionBar();
         mActionBar = actionBar;
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-        actionBar.setDisplayOptions(0, ActionBar.DISPLAY_SHOW_TITLE);
         if (mActionBarMode == TermSettings.ACTION_BAR_MODE_HIDES) {
             actionBar.hide();
         }
@@ -435,15 +411,16 @@ public class Term extends AppCompatActivity implements UpdateCallback, SharedPre
         if (mTermSessions != null) {
             int position = mViewFlipper.getDisplayedChild();
             if (mWinListAdapter == null) {
-                mWinListAdapter = new WindowListActionBarAdapter(mTermSessions);
+                mWinListAdapter = new WindowListAdapter(mTermSessions);
+                mWinListAdapter.setTermViewFlipper(mViewFlipper);
 
-                mActionBar.setListNavigationCallbacks(mWinListAdapter, mWinListItemSelected);
+//                mActionBar.setListNavigationCallbacks(mWinListAdapter, mWinListItemSelected);
             } else {
                 mWinListAdapter.setSessions(mTermSessions);
             }
             mViewFlipper.addCallback(mWinListAdapter);
 
-            mActionBar.setSelectedNavigationItem(position);
+//            mActionBar.setSelectedNavigationItem(position);
         }
     }
 
@@ -639,6 +616,17 @@ public class Term extends AppCompatActivity implements UpdateCallback, SharedPre
             doCreateNewWindow();
         } else if (id == R.id.menu_close_window) {
             confirmCloseWindow();
+        } else if (id == R.id.menu_window_list) {
+            mWinListAdapter.onUpdate();
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle(R.string.window_list)
+                    .setAdapter(mWinListAdapter, (dialog, which) -> {
+                        mViewFlipper.setDisplayedChild(which);
+                        dialog.dismiss();
+                    })
+                    .setOnItemSelectedListener(mWinListItemSelected)
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show();
         } else if (id == R.id.menu_reset) {
             doResetTerminal();
             Toast toast = Toast.makeText(this, R.string.reset_toast_notification, Toast.LENGTH_LONG);
@@ -688,7 +676,7 @@ public class Term extends AppCompatActivity implements UpdateCallback, SharedPre
     }
 
     private void confirmCloseWindow() {
-        final AlertDialog.Builder b = new AlertDialog.Builder(this);
+        final MaterialAlertDialogBuilder b = new MaterialAlertDialogBuilder(this);
         b.setIcon(android.R.drawable.ic_dialog_alert);
         b.setMessage(R.string.confirm_window_close_message);
         final Runnable closeWindow = this::doCloseWindow;
@@ -931,7 +919,7 @@ public class Term extends AppCompatActivity implements UpdateCallback, SharedPre
     }
 
     private void doDocumentKeys() {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(this);
         Resources r = getResources();
         dialog.setTitle(r.getString(R.string.control_key_dialog_title));
         dialog.setMessage(

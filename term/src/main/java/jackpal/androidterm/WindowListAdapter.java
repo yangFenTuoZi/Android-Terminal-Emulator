@@ -19,10 +19,14 @@ package jackpal.androidterm;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.radiobutton.MaterialRadioButton;
 
 import jackpal.androidterm.emulatorview.TermSession;
 import jackpal.androidterm.emulatorview.UpdateCallback;
@@ -30,9 +34,16 @@ import jackpal.androidterm.util.SessionList;
 
 public class WindowListAdapter extends BaseAdapter implements UpdateCallback {
     private SessionList mSessions;
+    private int displayedChild;
+    private TermViewFlipper mViewFlipper;
 
     public WindowListAdapter(SessionList sessions) {
         setSessions(sessions);
+    }
+
+    public void setTermViewFlipper(TermViewFlipper viewFlipper) {
+        mViewFlipper = viewFlipper;
+        displayedChild = mViewFlipper == null ? -1 : mViewFlipper.getDisplayedChild();
     }
 
     public void setSessions(SessionList sessions) {
@@ -73,8 +84,8 @@ public class WindowListAdapter extends BaseAdapter implements UpdateCallback {
 
     public View getView(int position, View convertView, ViewGroup parent) {
         Activity act = findActivityFromContext(parent.getContext());
-        View child = act.getLayoutInflater().inflate(R.layout.window_list_item, parent, false);
-        View close = child.findViewById(R.id.window_list_close);
+        View child = LayoutInflater.from(parent.getContext()).inflate(R.layout.window_list_item, parent, false);
+        MaterialButton close = child.findViewById(R.id.window_list_close);
 
         TextView label = child.findViewById(R.id.window_list_label);
         String defaultTitle = act.getString(R.string.window_title, position + 1);
@@ -89,11 +100,13 @@ public class WindowListAdapter extends BaseAdapter implements UpdateCallback {
                 notifyDataSetChanged();
             }
         });
-
+        if (position == displayedChild)
+            child.<MaterialRadioButton>findViewById(R.id.radio_button).setChecked(true);
         return child;
     }
 
     public void onUpdate() {
+        displayedChild = mViewFlipper == null ? -1 : mViewFlipper.getDisplayedChild();
         notifyDataSetChanged();
     }
 
